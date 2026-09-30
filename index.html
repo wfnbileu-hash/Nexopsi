@@ -898,10 +898,13 @@ function renderChat(){
   var container = $("chat-container");
   if(!container) return;
   container.innerHTML = chatHistory.map(function(m){
-    return '<div class="chat-msg ' + m.sender + '">' + esc(m.text) + '</div>';
+    // Se a mensagem for do bot, permitimos HTML básico / quebras de linha; se for do user, usamos esc() por segurança
+    var content = m.sender === 'bot' ? m.text : esc(m.text);
+    return '<div class="chat-msg ' + m.sender + '">' + content + '</div>';
   }).join("");
   container.scrollTop = container.scrollHeight;
 }
+
 </script>
 </body>
 </html>
