@@ -747,49 +747,39 @@ function renderStructuredAnalysis(p, approach, ss, aiText){
 }
 
 async function sendAIChatMessage(patientId, approach){
+async function sendAIChatMessage(patientId, approach){
   var input = $("chat-input");
   if(!input) return;
   var msg = input.value.trim();
   if(!msg) return;
 
-  // O chat só pode operar dentro do caso que gerou a supervisão atual.
-  if(!currentCase || currentCase.patientId !== patientId) {
-    alert("Este caso não está mais ativo. Gere novamente a supervisão para este paciente.");
-    return;
-  }
-
-  var p = P.find(function(x) { return x.id === patientId; });
-  if(!p) return;
-
   chatHistory.push({ sender: 'user', text: msg });
   input.value = "";
   renderChat();
 
-  var historicoRecente = chatHistory.slice(-8).map(function(m){
+  var p = P.find(function(x) { return x.id === patientId; });
+  var ss = S.filter(function(x) { return x.pid === patientId; });
+  
+  var historicoRecente = chatHistory.slice(-6).map(function(m){
     return (m.sender === 'user' ? 'Terapeuta: ' : 'Supervisor IA: ') + m.text;
   }).join("\n");
 
-  var chatPrompt =
-    "Atue como supervisor clínico para apoio ao raciocínio do profissional.\n" +
-    "ABORDAGEM TEÓRICA: " + currentCase.approach + "\n\n" +
-    currentCase.context + "\n" +
-    "REGRA DE ISOLAMENTO: responda exclusivamente sobre o CASO ISOLADO acima. Ignore completamente qualquer outro paciente, análise ou exemplo. Não invente informações ausentes. Se algo não estiver no caso, diga que não foi fornecido.\n\n" +
-    "CONVERSA DESTE CASO:\n" + historicoRecente + "\n\n" +
-    "PERGUNTA ATUAL DO TERAPEUTA:\n" + msg + "\n\n" +
-    "Responda de forma prática, específica e fundamentada nos dados deste caso. Diferencie observação, hipótese e informação que ainda precisa ser investigada. Não apresente diagnóstico como certeza.";
+  // Prompt ajustado para focar em respostas curtas, diretas e pragmáticas
+  var chatPrompt = "Atue estritamente como um Supervisor Clínico sênior especialista na abordagem " + approach + ".\n" +
+    "Paciente em foco: " + (p ? p.name : "Geral") + " | Queixa: " + (p ? p.queixa : "N/I") + ".\n" +
+    "Histórico recente da conversa:\n" + historicoRecente + "\n\n" +
+    "Responda à última pergunta do terapeuta ('" + msg + "') de forma **curta, direta e objetiva** (máximo de 3 a 4 frases ou tópicos rápidos). Evite textos longos ou estruturados como laudo; foque numa orientação prática e imediata de manejo clínico para o consultório.";
 
   var reply = await callGeminiAPI(chatPrompt);
-
+  
   if (!reply) {
-    reply = "Não foi possível obter a resposta da IA neste momento. Tente novamente.";
+    reply = "Foque em validar o afeto principal e abrir o espaço terapêutico com uma pergunta aberta sobre o último evento significativo.";
   }
-
-  // Se o usuário mudou de caso enquanto a IA respondia, não mistura a resposta no chat atual.
-  if(!currentCase || currentCase.patientId !== patientId) return;
 
   chatHistory.push({ sender: 'bot', text: reply });
   renderChat();
 }
+
 function documentsTab(selectedPatientId){
   nav("nd");
   var patientOptions = P.length ? P.map(function(p){
