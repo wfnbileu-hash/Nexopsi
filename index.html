@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexopsi - Supervisão Clínica e Gestão</title>
+    <title>Nexopsi - Copiloto e Gestão Clínica</title>
+    <!-- Google Fonts & FontAwesome Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,43 +18,180 @@
             --text-muted: #64748b;
             --border: #e2e8f0;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
-        header { background: var(--card-bg); padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 10; }
-        header h1 { font-size: 1.2rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-        main { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 90px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .btn { background: var(--primary); color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: background 0.2s; }
-        .btn:hover { background: var(--primary-dark); }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
-        .form-control { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; outline: none; background: #fff; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        nav.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05); }
-        .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 500; cursor: pointer; flex: 1; padding: 4px 0; }
-        .nav-item i { font-size: 1.25rem; margin-bottom: 4px; }
-        .nav-item.active { color: var(--primary); }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        main {
+            flex: 1;
+            padding: 16px;
+            padding-bottom: 90px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sistema de Abas */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Elementos Visuais */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* Navegação Inferior */
+        nav.bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+            box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            padding: 4px 0;
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
 
+    <!-- CABEÇALHO -->
     <header>
         <h1><i class="fa-solid fa-brain"></i> Nexopsi</h1>
         <div><i class="fa-solid fa-circle-user" style="font-size: 1.4rem; color: var(--text-muted);"></i></div>
     </header>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <main>
-        <!-- ABA 1: INÍCIO / SUPERVISÃO -->
+        <!-- ABA 1: INÍCIO / SUPERVISÃO IA -->
         <div id="tab-inicio" class="tab-content active">
-            <div class="card" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
-                <h2>Painel Clínico</h2>
-                <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">Supervisão inteligente e suporte multiabordagem.</p>
+            <div class="card" style="background: linear-gradient(135deg, #4f46e5, #4338ca); color: white;">
+                <h2 style="font-size: 1.2rem; font-weight: 700;">Bem-vindo ao Nexopsi</h2>
+                <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">Supervisão clínica inteligente e gestão integrada para a sua prática.</p>
             </div>
 
             <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Copiloto & Supervisão Clínica</h3>
+                <h3 style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> 
+                    Supervisão com IA
+                </h3>
                 
                 <div class="form-group">
                     <label>Paciente Ativo</label>
@@ -65,106 +203,277 @@
                 <div class="form-group">
                     <label>Abordagem para Análise</label>
                     <select id="ai-abordagem" class="form-control">
-                        <option value="tcc">Terapia Cognitivo-Comportamental (TCC)</option>
-                        <option value="psicanalise">Psicanálise</option>
-                        <option value="humanista">Humanista / Fenomenológica</option>
-                        <option value="behaviorista">Behaviorista (Análise do Comportamento)</option>
+                        <option value="TCC">Terapia Cognitivo-Comportamental (TCC)</option>
+                        <option value="Psicanálise">Psicanálise</option>
+                        <option value="Humanista">Humanista / Fenomenológica</option>
+                        <option value="Behaviorista">Behaviorista (Análise do Comportamento)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>Relato ou Dúvida para Análise</label>
-                    <textarea id="ai-prompt" class="form-control" rows="3" placeholder="Descreva o caso, sintomas ou o que o paciente trouxe..."></textarea>
+                    <textarea id="ai-prompt" class="form-control" rows="3" placeholder="Descreva o caso clínico ou coloque a sua dúvida..."></textarea>
                 </div>
 
-                <button class="btn" onclick="consultAI()"><i class="fa-solid fa-bolt"></i> Gerar Análise Teórica & Orientação</button>
+                <button class="btn" onclick="consultAI()">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar para Supervisão
+                </button>
                 
-                <div id="ai-response" style="margin-top: 14px; font-size: 0.9rem; background: var(--bg-color); padding: 12px; border-radius: 8px; display: none;"></div>
+                <div id="ai-response" style="margin-top: 14px; font-size: 0.9rem; background: var(--bg-color); padding: 12px; border-radius: 8px; display: none; line-height: 1.5;"></div>
             </div>
         </div>
-a Requisição:</p>
-                <div id="supervisor-erro-detalhe" class="font-mono bg-white p-2.5 rounded border border-red-200 overflow-x-auto text-[11px] leading-tight"></div>
+
+        <!-- ABA 2: PACIENTES -->
+        <div id="tab-pacientes" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="font-size: 1rem;"><i class="fa-solid fa-users" style="color: var(--primary);"></i> Gestão de Pacientes</h3>
+                    <button class="btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="abrirNovoPaciente()">
+                        <i class="fa-solid fa-plus"></i> Novo
+                    </button>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="filtro-paciente" class="form-control" placeholder="Pesquisar paciente..." oninput="renderizarListaPacientes()">
+                </div>
+                <div id="lista-pacientes-container"></div>
             </div>
 
-            <!-- Resultado & Exportação em PDF -->
-            <div id="supervisor-resultado" class="hidden space-y-3">
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
-                    <div class="flex items-center justify-between border-b pb-2">
-                        <h3 class="text-sm font-bold text-indigo-700 flex items-center gap-1.5">
-                            📑 Formulação Clínica & Direcionamento
-                        </h3>
+            <!-- Modal / Form Criar Paciente -->
+            <div id="card-form-paciente" class="card" style="display: none;">
+                <h3 style="font-size: 1rem; margin-bottom: 12px;"><i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> Cadastrar Paciente</h3>
+                <div class="form-group">
+                    <label>Código / Sigla*</label>
+                    <input type="text" id="pac-sigla" class="form-control" placeholder="Ex: P-01 ou J.S.">
+                </div>
+                <div class="form-group">
+                    <label>Nome Completo*</label>
+                    <input type="text" id="pac-nome" class="form-control" placeholder="Ex: Ana Costa">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Idade</label>
+                        <input type="number" id="pac-idade" class="form-control" placeholder="Ex: 28">
                     </div>
-
-                    <div id="supervisor-resposta-conteudo" class="text-xs text-slate-700 leading-relaxed space-y-3">
-                        <!-- Resposta da IA -->
+                    <div class="form-group">
+                        <label>Profissão</label>
+                        <input type="text" id="pac-profissao" class="form-control" placeholder="Ex: Designer">
                     </div>
                 </div>
-
-                <!-- Botão de Download PDF -->
-                <button onclick="gerarPDFRelatorio()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
-                    📄 Exportar Relatório Clínico Completo em PDF
-                </button>
+                <div class="form-group">
+                    <label>Queixa Principal</label>
+                    <textarea id="pac-queixa" class="form-control" rows="2" placeholder="Motivo da consulta..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="salvarPaciente()"><i class="fa-solid fa-check"></i> Salvar</button>
+                    <button class="btn" onclick="fecharFormPaciente()" style="background: #e2e8f0; color: var(--text-main);">Cancelar</button>
+                </div>
             </div>
-        </section>
+        </div>
 
+        <!-- ABA 3: SESSÕES -->
+        <div id="tab-sessoes" class="tab-content">
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 12px;"><i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Registrar Nova Sessão</h3>
+                <div class="form-group">
+                    <label>Selecionar Paciente*</label>
+                    <select id="sessao-paciente-select" class="form-control">
+                        <option value="">-- Selecione um Paciente --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Relato Principal / Pauta da Sessão*</label>
+                    <textarea id="sessao-relato" class="form-control" rows="3" placeholder="O que o paciente trouxe de principal nesta sessão..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Intervenções / Manejos Utilizados</label>
+                    <textarea id="sessao-intervencoes" class="form-control" rows="2" placeholder="Técnicas, reestruturações aplicadas..."></textarea>
+                </div>
+                <button class="btn" onclick="salvarSessao()"><i class="fa-solid fa-floppy-disk"></i> Salvar Sessão</button>
+            </div>
+        </div>
+
+        <!-- ABA 4: FERRAMENTAS -->
+        <div id="tab-ferramentas" class="tab-content">
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 10px;"><i class="fa-solid fa-file-contract" style="color: var(--primary);"></i> Emissão de Documentos</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Gere atestados ou declarações rápidas para os seus pacientes.</p>
+                <div class="form-group">
+                    <label>Tipo de Documento</label>
+                    <select class="form-control">
+                        <option>Atestado Psicológico</option>
+                        <option>Declaração de Acompanhamento</option>
+                        <option>Relatório Clínico</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Paciente / Beneficiário</label>
+                    <select id="doc-paciente-select" class="form-control">
+                        <option value="">Selecione o paciente...</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="gerarDocumento()"><i class="fa-solid fa-print"></i> Gerar Documento</button>
+            </div>
+        </div>
     </main>
 
-    <!-- TEMPLATE OCULTO PARA IMPRESSÃO EM PDF -->
-    <div class="hidden">
-        <div id="pdf-template" class="p-8 bg-white text-slate-900 space-y-6 font-sans">
-            <!-- Cabeçalho do Documento -->
-            <div class="border-b-2 border-indigo-600 pb-4 flex justify-between items-end">
-                <div>
-                    <h1 class="text-xl font-bold text-indigo-900">PRONTUÁRIO & RELATÓRIO DE SUPERVISÃO CLÍNICA</h1>
-                    <p class="text-xs text-slate-500 font-medium">Copiloto Clínico Multiabordagem</p>
-                </div>
-                <div class="text-right text-xs text-slate-500">
-                    <p id="pdf-data-emissao"></p>
-                </div>
-            </div>
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="mudarAba('tab-inicio', this)">
+            <i class="fa-solid fa-house"></i>
+            <span>Início</span>
+        </button>
+        <button class="nav-item" onclick="mudarAba('tab-pacientes', this)">
+            <i class="fa-solid fa-users"></i>
+            <span>Pacientes</span>
+        </button>
+        <button class="nav-item" onclick="mudarAba('tab-sessoes', this)">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Sessões</span>
+        </button>
+        <button class="nav-item" onclick="mudarAba('tab-ferramentas', this)">
+            <i class="fa-solid fa-toolbox"></i>
+            <span>Ferramentas</span>
+        </button>
+    </nav>
 
-            <!-- Dados do Paciente -->
-            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs space-y-1.5">
-                <h3 class="font-bold text-indigo-800 text-sm border-b border-slate-200 pb-1 mb-2">1. DADOS DE IDENTIFICAÇÃO DO CASO</h3>
-                <p><strong>Paciente/Código:</strong> <span id="pdf-paciente-nome"></span></p>
-                <p><strong>Abordagem Teórica Utilizada:</strong> <span id="pdf-abordagem-nome"></span></p>
-                <p><strong>Queixa Principal:</strong> <span id="pdf-queixa"></span></p>
-                <p><strong>Objetivo Terapêutico:</strong> <span id="pdf-objetivo"></span></p>
-            </div>
+    <!-- SCRIPT DE LÓGICA DO APP -->
+    <script>
+        // Função para alternar abas
+        function mudarAba(idAba, elemento) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(idAba).classList.add('active');
+            elemento.classList.add('active');
+            window.scrollTo(0, 0);
+        }
 
-            <!-- Histórico Completo de Sessões Registradas -->
-            <div class="space-y-2">
-                <h3 class="font-bold text-indigo-800 text-sm border-b border-slate-200 pb-1">2. HISTÓRICO DAS SESSÕES DE EVOLUÇÃO</h3>
-                <div id="pdf-historico-sessoes" class="space-y-3 text-xs">
-                    <!-- Preenchido dinamicamente no JS -->
-                </div>
-            </div>
+        // Banco de Dados Local Simulado
+        let pacientes = [
+            { id: 1, sigla: "P-01", nome: "Ana Costa", idade: 28, profissao: "Designer", queixa: "Ansiedade e insônia" }
+        ];
 
-            <!-- Análise e Formulação Teórica do Supervisor -->
-            <div class="space-y-2">
-                <h3 class="font-bold text-indigo-800 text-sm border-b border-slate-200 pb-1">3. FORMULAÇÃO TEÓRICA & ORIENTAÇÃO DO SUPERVISOR</h3>
-                <div id="pdf-conteudo-analise" class="text-xs leading-relaxed space-y-4">
-                    <!-- Conteúdo do Supervisor Injetado -->
-                </div>
-            </div>
+        function atualizarSelects() {
+            const listIds = ['ai-paciente-select', 'sessao-paciente-select', 'doc-paciente-select'];
+            listIds.forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    const valAtual = select.value;
+                    select.innerHTML = '<option value="">-- Selecione um Paciente --</option>';
+                    pacientes.forEach(p => {
+                        select.innerHTML += `<option value="${p.id}">${p.sigla} - ${p.nome}</option>`;
+                    });
+                    select.value = valAtual;
+                }
+            });
+            renderizarListaPacientes();
+        }
 
-            <!-- Rodapé Ético -->
-            <div class="border-t border-slate-200 pt-4 text-[10px] text-slate-400 text-center space-y-1">
-                <p>🔒 Documento sigiloso para uso exclusivo do profissional de saúde mental em acompanhamento supervisor.</p>
-                <p>Gerado via Copiloto Clínico - Software de Apoio à Decisão Terapêutica.</p>
-            </div>
-        </div>
-    </div>
+        function renderizarListaPacientes() {
+            const container = document.getElementById('lista-pacientes-container');
+            const filtro = document.getElementById('filtro-paciente') ? document.getElementById('filtro-paciente').value.toLowerCase() : '';
+            if (!container) return;
 
-    <!-- Barra de Navegação Inferior -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-40">
-        <div class="max-w-md mx-auto grid grid-cols-4 text-center py-2">
-            <button onclick="mudarAba('tab-home', this)" class="nav-btn text-indigo-600 flex flex-col items-center justify-center gap-0.5">
-                <span class="text-xl">🧠</span>
-                <span class="text-[11px] font-medium">Home</span>
-            </button>
+            container.innerHTML = '';
+            const filtrados = pacientes.filter(p => p.nome.toLowerCase().includes(filtro) || p.sigla.toLowerCase().includes(filtro));
 
-            <button onclick="mudarAba('tab-pacientes', this)" class="nav-btn text-slate-400 flex flex-col items-center justify-center gap-0.5">
+            if (filtrados.length === 0) {
+                container.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted); padding: 8px 0;">Nenhum paciente encontrado.</p>';
+                return;
+            }
+
+            filtrados.forEach(p => {
+                container.innerHTML += `
+                    <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; margin-top: 8px; border: 1px solid var(--border);">
+                        <strong>${p.sigla}</strong> — ${p.nome} (${p.idade || '--'} anos)<br>
+                        <small style="color: var(--text-muted); display: block; margin-top: 2px;">Queixa: ${p.queixa || 'Não informada'}</small>
+                    </div>
+                `;
+            });
+        }
+
+        function abrirNovoPaciente() {
+            document.getElementById('card-form-paciente').style.display = 'block';
+        }
+
+        function fecharFormPaciente() {
+            document.getElementById('card-form-paciente').style.display = 'none';
+        }
+
+        function salvarPaciente() {
+            const sigla = document.getElementById('pac-sigla').value;
+            const nome = document.getElementById('pac-nome').value;
+            if (!sigla || !nome) {
+                alert('Preencha pelo menos a sigla e o nome.');
+                return;
+            }
+            pacientes.push({
+                id: pacientes.length + 1,
+                sigla,
+                nome,
+                idade: document.getElementById('pac-idade').value,
+                profissao: document.getElementById('pac-profissao').value,
+                queixa: document.getElementById('pac-queixa').value
+            });
+            
+            document.getElementById('pac-sigla').value = '';
+            document.getElementById('pac-nome').value = '';
+            document.getElementById('pac-idade').value = '';
+            document.getElementById('pac-profissao').value = '';
+            document.getElementById('pac-queixa').value = '';
+            
+            fecharFormPaciente();
+            atualizarSelects();
+            alert('Paciente cadastrado com sucesso!');
+        }
+
+        function salvarSessao() {
+            const pacId = document.getElementById('sessao-paciente-select').value;
+            const relato = document.getElementById('sessao-relato').value;
+            if (!pacId || !relato) {
+                alert('Selecione o paciente e preencha o relato da sessão.');
+                return;
+            }
+            alert('Sessão registrada com sucesso!');
+            document.getElementById('sessao-relato').value = '';
+            document.getElementById('sessao-intervencoes').value = '';
+        }
+
+        function consultAI() {
+            const prompt = document.getElementById('ai-prompt').value;
+            const abordagem = document.getElementById('ai-abordagem').value;
+            const respDiv = document.getElementById('ai-response');
+            
+            if (!prompt) {
+                alert('Escreva o caso ou dúvida para a análise.');
+                return;
+            }
+
+            respDiv.style.display = 'block';
+            respDiv.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Analisando o caso sob a abordagem <strong>${abordagem}</strong>...`;
+
+            setTimeout(() => {
+                respDiv.innerHTML = `<strong>Formulação Clínica (${abordagem}):</strong><br>Com base nos dados informados, sugere-se observar os gatilhos associados aos sintomas e trabalhar a regulação emocional/reestruturação na próxima sessão.`;
+            }, 1000);
+        }
+
+        function gerarDocumento() {
+            const pac = document.getElementById('doc-paciente-select').value;
+            if(!pac) {
+                alert('Selecione um paciente para gerar o documento.');
+                return;
+            }
+            alert('Documento gerado com sucesso!');
+        }
+
+        // Inicialização
+        window.onload = function() {
+            atualizarSelects();
+        };
+    </script>
+</body>
+</html>
+"nav-btn text-slate-400 flex flex-col items-center justify-center gap-0.5">
                 <span class="text-xl">👤</span>
                 <span class="text-[11px] font-medium">Pacientes</span>
             </button>
