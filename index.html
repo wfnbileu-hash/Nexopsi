@@ -587,7 +587,7 @@ function supervisor(pid){
 // ==========================================
 async function callGeminiAPI(promptText) {
   try {
-    var response = await fetch("/.netlify/functions/gemini", {
+    var response = await fetch("/api/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: promptText })
