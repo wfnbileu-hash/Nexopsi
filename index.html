@@ -747,7 +747,6 @@ function renderStructuredAnalysis(p, approach, ss, aiText){
 }
 
 async function sendAIChatMessage(patientId, approach){
-async function sendAIChatMessage(patientId, approach){
   var input = $("chat-input");
   if(!input) return;
   var msg = input.value.trim();
@@ -780,7 +779,7 @@ async function sendAIChatMessage(patientId, approach){
   renderChat();
 }
 
-function documentsTab(selectedPatientId){
+  function documentsTab(selectedPatientId){
   nav("nd");
   var patientOptions = P.length ? P.map(function(p){
     return '<option value="' + esc(p.name) + '" ' + (selectedPatientId===p.id?'selected':'') + '>' + esc(p.name) + ' (' + esc(p.code||'ID') + ')</option>';
