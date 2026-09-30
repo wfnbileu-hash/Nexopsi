@@ -591,7 +591,7 @@
             const textoPromptParaEnviar = `DADOS GERAIS DO PACIENTE:\nNome/Código: ${pacienteObj ? pacienteObj.nome : 'Não identificado'}\nAbordagem Selecionada: ${nomeAbordagemFormatada(abordagem)}\nQueixa Principal: ${pacienteObj ? pacienteObj.queixa : 'N/A'}\nObjetivo Terapêutico: ${pacienteObj ? pacienteObj.objetivo : 'N/A'}\n\nHISTÓRICO CLÍNICO DISPONÍVEL:\n"${relatoGlobal}"`;
 
             try {
-                const response = await fetch('/.netlify/functions/gemini', {
+                const response = await fetch('/api/gemini', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
