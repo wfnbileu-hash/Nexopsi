@@ -147,7 +147,7 @@ Estruture sua resposta EXCLUSIVAMENTE nos seguintes itens em HTML limpo:
       }]
     };
 
-    const modelos = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    const modelos = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
     let data = null;
     let lastError = "";
 
