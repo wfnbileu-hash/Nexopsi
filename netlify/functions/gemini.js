@@ -11,21 +11,43 @@ exports.handler = async function(event, context) {
       return { statusCode: 500, body: JSON.stringify({ error: "Chave de API não configurada no servidor." }) };
     }
 
-    // Usando o endpoint padrão atualizado e estável
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
+    // Lista de modelos para testar em ordem de prioridade
+    const modelsToTry = [
+      "gemini-2.0-flash",
+      "gemini-1.5-flash",
+      "gemini-1.5-pro"
+    ];
 
-    const data = await response.json();
+    let data = null;
+    let lastError = "";
 
-    if (data.error) {
+    for (const model of modelsToTry) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+
+        const json = await response.json();
+
+        if (!json.error && json.candidates) {
+          data = json;
+          break; // Encontrou um modelo funcional, sai do ciclo
+        } else if (json.error) {
+          lastError = json.error.message;
+        }
+      } catch (err) {
+        lastError = err.message;
+      }
+    }
+
+    if (!data) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: data.error.message || "Erro retornado pela API do Gemini." })
+        body: JSON.stringify({ error: "Nenhum modelo disponível respondeu com sucesso. Detalhe: " + lastError })
       };
     }
 
