@@ -3,275 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexopsi - Copiloto e Gestão Clínica</title>
-    <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Copiloto Clínico Multiabordagem</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf.js CDN para Geração de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --primary-light: #e0e7ff;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        header {
-            background: var(--card-bg);
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+        ::-webkit-scrollbar {
+            width: 4px;
         }
-
-        header h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        main {
-            flex: 1;
-            padding: 16px;
-            padding-bottom: 90px;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* Sistema de Abas */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Elementos Visuais */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-            background: #fff;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-
-        /* Navegação Inferior */
-        nav.bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            z-index: 1000;
-            box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);
-        }
-
-        .nav-item {
-            background: none;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            flex: 1;
-            padding: 4px 0;
-        }
-
-        .nav-item i {
-            font-size: 1.25rem;
-            margin-bottom: 4px;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 pb-24 antialiased min-h-screen">
 
-    <!-- CABEÇALHO -->
-    <header>
-        <h1><i class="fa-solid fa-brain"></i> Nexopsi</h1>
-        <div><i class="fa-solid fa-circle-user" style="font-size: 1.4rem; color: var(--text-muted);"></i></div>
+    <!-- Top Header Azul -->
+    <header class="bg-indigo-600 text-white text-center py-4 px-3 shadow-md sticky top-0 z-30">
+        <h1 class="text-xl font-bold flex items-center justify-center gap-2">
+            🧠 Copiloto Clínico Multiabordagem
+        </h1>
+        <p class="text-xs text-indigo-100 font-medium mt-0.5">Supervisão TCC, Psicanálise, Humanista e Behaviorista</p>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main>
-        <!-- ABA 1: INÍCIO / SUPERVISÃO IA -->
-        <div id="tab-inicio" class="tab-content active">
-            <div class="card" style="background: linear-gradient(135deg, #4f46e5, #4338ca); color: white;">
-                <h2 style="font-size: 1.2rem; font-weight: 700;">Bem-vindo ao Nexopsi</h2>
-                <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 4px;">Supervisão clínica inteligente e gestão integrada para a sua prática.</p>
+    <main class="max-w-md mx-auto p-4 space-y-4">
+
+        <!-- Aviso Ético -->
+        <div class="bg-red-50 border border-red-200 rounded-xl p-3.5 text-xs text-red-700 leading-relaxed shadow-sm">
+            <span class="font-bold">🔒 Aviso Ético de Testes:</span> Protótipo local para validação. Não insira dados sensíveis ou nomes completos reais de pacientes.
+        </div>
+
+        <!-- ABA 1: HOME -->
+        <section id="tab-home" class="tab-content space-y-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+                    <span class="text-lg">💬</span>
+                    <h2 class="text-base font-bold text-indigo-700">Análise do Caso Completo</h2>
+                </div>
+                
+                <div class="space-y-3">
+                    <label class="block text-xs font-semibold text-slate-600">Selecione o Paciente:</label>
+                    <select id="home-paciente-select" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">-- Selecione um Paciente --</option>
+                    </select>
+
+                    <button onclick="irParaSupervisorComPaciente('home-paciente-select')" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm transition flex items-center justify-center gap-2 shadow">
+                        ⚡ Analisar Histórico no Supervisor
+                    </button>
+                </div>
             </div>
 
-            <div class="card">
-                <h3 style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> 
-                    Supervisão com IA
-                </h3>
-                
-                <div class="form-group">
-                    <label>Paciente Ativo</label>
-                    <select id="ai-paciente-select" class="form-control">
+            <!-- HISTÓRICO COMPLETO DE SESSÕES -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">📚</span>
+                        <h2 class="text-base font-bold text-indigo-700">Histórico de Sessões</h2>
+                    </div>
+                    <span id="home-historico-qtd" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">0</span>
+                </div>
+
+                <!-- Filtro por Paciente -->
+                <div class="mb-3">
+                    <select id="home-filtro-paciente" onchange="atualizarHistoricoHome()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 focus:outline-none">
+                        <option value="">Filtrar por todos os pacientes</option>
+                    </select>
+                </div>
+
+                <div id="home-historico-lista" class="space-y-3 text-xs text-slate-500">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 2: PACIENTES -->
+        <section id="tab-pacientes" class="tab-content hidden space-y-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-3">
+                <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                    <span class="text-lg">👤</span>
+                    <h2 class="text-base font-bold text-indigo-700">Cadastro de Paciente</h2>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Código/Iniciais:</label>
+                    <input type="text" id="paciente-nome" placeholder="Ex: Paciente B" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Abordagem Teórica Predominante:</label>
+                    <select id="paciente-abordagem" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="tcc">Terapia Cognitivo-Comportamental (TCC)</option>
+                        <option value="psicanalise">Psicanálise / Psicodinâmica</option>
+                        <option value="humanista">Humanista / Fenomenológica / ACP</option>
+                        <option value="behaviorista">Análise do Comportamento (Behaviorismo)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Queixa Principal:</label>
+                    <textarea id="paciente-queixa" rows="2" placeholder="Ex: Dificuldade em estabelecer limites interpessoais..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Objetivo Terapêutico:</label>
+                    <input type="text" id="paciente-objetivo" placeholder="Ex: Desenvolvimento de autonomia e regulação emocional" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <button onclick="salvarNovoPaciente()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm shadow transition">
+                    Salvar Paciente
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+                    <span class="text-lg">👥</span>
+                    <h2 class="text-base font-bold text-indigo-700">Pacientes Cadastrados</h2>
+                </div>
+                <div id="lista-pacientes-cadastrados" class="space-y-3">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 3: SESSÃO -->
+        <section id="tab-sessao" class="tab-content hidden space-y-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-3">
+                <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                    <span class="text-lg">📝</span>
+                    <h2 class="text-base font-bold text-indigo-700">Registrar Nova Sessão</h2>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Paciente:</label>
+                    <select id="sessao-paciente-select" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="">-- Selecione um Paciente --</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label>Abordagem para Análise</label>
-                    <select id="ai-abordagem" class="form-control">
-                        <option value="TCC">Terapia Cognitivo-Comportamental (TCC)</option>
-                        <option value="Psicanálise">Psicanálise</option>
-                        <option value="Humanista">Humanista / Fenomenológica</option>
-                        <option value="Behaviorista">Behaviorista (Análise do Comportamento)</option>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Data da Sessão:</label>
+                    <input type="text" id="sessao-data" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Relato da Sessão / Observações:</label>
+                    <textarea id="sessao-relato" rows="4" placeholder="Descreva os relatos, falas marcantes, afetos demonstrados, reações do terapeuta e intervenções realizadas..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"></textarea>
+                </div>
+
+                <button onclick="salvarRegistroSessao()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm shadow transition">
+                    Salvar Registro de Sessão
+                </button>
+            </div>
+        </section>
+
+        <!-- ABA 4: SUPERVISOR -->
+        <section id="tab-supervisor" class="tab-content hidden space-y-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-3">
+                <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                    <span class="text-lg">🏫</span>
+                    <h2 class="text-base font-bold text-indigo-700">Painel do Supervisor</h2>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Paciente Ativo:</label>
+                    <select id="supervisor-paciente-select" onchange="carregarContextoGlobalParaSupervisor()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">-- Selecione um Paciente --</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label>Relato ou Dúvida para Análise</label>
-                    <textarea id="ai-prompt" class="form-control" rows="3" placeholder="Descreva o caso clínico ou coloque a sua dúvida..."></textarea>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Abordagem para Análise:</label>
+                    <select id="supervisor-abordagem-select" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-indigo-900">
+                        <option value="tcc">Terapia Cognitivo-Comportamental (TCC)</option>
+                        <option value="psicanalise">Psicanálise / Psicodinâmica</option>
+                        <option value="humanista">Humanista / Fenomenológica / ACP</option>
+                        <option value="behaviorista">Análise do Comportamento (Behaviorismo)</option>
+                    </select>
                 </div>
 
-                <button class="btn" onclick="consultAI()">
-                    <i class="fa-solid fa-paper-plane"></i> Enviar para Supervisão
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-semibold text-slate-600">Histórico Mapeado para Análise:</label>
+                        <button onclick="carregarContextoGlobalParaSupervisor()" class="text-[10px] text-indigo-600 font-semibold hover:underline">🔄 Recarregar Histórico</button>
+                    </div>
+                    <textarea id="supervisor-relato-input" rows="6" placeholder="Selecione um paciente para carregar o histórico de sessões..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y font-mono"></textarea>
+                </div>
+
+                <button onclick="executarSupervisaoClínica()" id="btn-analisar" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-sm shadow transition flex items-center justify-center gap-2">
+                    ⚡ Gerar Análise Teórica & Orientação Clínica
                 </button>
-                
-                <div id="ai-response" style="margin-top: 14px; font-size: 0.9rem; background: var(--bg-color); padding: 12px; border-radius: 8px; display: none; line-height: 1.5;"></div>
-            </div>
-        </div>
-
-        <!-- ABA 2: PACIENTES -->
-        <div id="tab-pacientes" class="tab-content">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 style="font-size: 1rem;"><i class="fa-solid fa-users" style="color: var(--primary);"></i> Gestão de Pacientes</h3>
-                    <button class="btn" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="abrirNovoPaciente()">
-                        <i class="fa-solid fa-plus"></i> Novo
-                    </button>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="filtro-paciente" class="form-control" placeholder="Pesquisar paciente..." oninput="renderizarListaPacientes()">
-                </div>
-                <div id="lista-pacientes-container"></div>
             </div>
 
-            <!-- Modal / Form Criar Paciente -->
-            <div id="card-form-paciente" class="card" style="display: none;">
-                <h3 style="font-size: 1rem; margin-bottom: 12px;"><i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> Cadastrar Paciente</h3>
-                <div class="form-group">
-                    <label>Código / Sigla*</label>
-                    <input type="text" id="pac-sigla" class="form-control" placeholder="Ex: P-01 ou J.S.">
-                </div>
-                <div class="form-group">
-                    <label>Nome Completo*</label>
-                    <input type="text" id="pac-nome" class="form-control" placeholder="Ex: Ana Costa">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Idade</label>
-                        <input type="number" id="pac-idade" class="form-control" placeholder="Ex: 28">
+            <!-- Loading -->
+            <div id="supervisor-loading" class="hidden text-center py-6 space-y-2">
+                <div class="inline-block animate-spin rounded-full h-7 w-7 border-3 border-indigo-600 border-t-transparent"></div>
+                <p class="text-xs text-slate-600 font-medium">Analisando o caso sob a abordagem selecionada...</p>
+            </div>
+
+            <!-- Caixa de Detalhes de Erro -->
+            <div id="supervisor-erro-box" class="hidden bg-red-100 border border-red-300 text-red-800 rounded-2xl p-4 text-xs space-y-2">
+                <p class="font-bold flex items-center gap-1 text-sm text-red-900">⚠️ Erro na Requisição:</p>
+                <div id="supervisor-erro-detalhe" class="font-mono bg-white p-2.5 rounded border border-red-200 overflow-x-auto text-[11px] leading-tight"></div>
+            </div>
+
+            <!-- Resultado & Exportação em PDF -->
+            <div id="supervisor-resultado" class="hidden space-y-3">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h3 class="text-sm font-bold text-indigo-700 flex items-center gap-1.5">
+                            📑 Formulação Clínica & Direcionamento
+                        </h3>
                     </div>
-                    <div class="form-group">
-                        <label>Profissão</label>
-                        <input type="text" id="pac-profissao" class="form-control" placeholder="Ex: Designer">
+
+                    <div id="supervisor-resposta-conteudo" class="text-xs text-slate-700 leading-relaxed space-y-3">
+                        <!-- Resposta da IA -->
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Queixa Principal</label>
-                    <textarea id="pac-queixa" class="form-control" rows="2" placeholder="Motivo da consulta..."></textarea>
+
+                <!-- Botão de Download PDF -->
+                <button onclick="gerarPDFRelatorio()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+                    📄 Exportar Relatório Clínico Completo em PDF
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- TEMPLATE OCULTO PARA IMPRESSÃO EM PDF -->
+    <div class="hidden">
+        <div id="pdf-template" class="p-8 bg-white text-slate-900 space-y-6 font-sans">
+            <!-- Cabeçalho do Documento -->
+            <div class="border-b-2 border-indigo-600 pb-4 flex justify-between items-end">
+                <div>
+                    <h1 class="text-xl font-bold text-indigo-900">PRONTUÁRIO & RELATÓRIO DE SUPERVISÃO CLÍNICA</h1>
+                    <p class="text-xs text-slate-500 font-medium">Copiloto Clínico Multiabordagem</p>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn" onclick="salvarPaciente()"><i class="fa-solid fa-check"></i> Salvar</button>
-                    <button class="btn" onclick="fecharFormPaciente()" style="background: #e2e8f0; color: var(--text-main);">Cancelar</button>
+                <div class="text-right text-xs text-slate-500">
+                    <p id="pdf-data-emissao"></p>
                 </div>
             </div>
-        </div>
 
-        <!-- ABA 3: SESSÕES -->
-        <div id="tab-sessoes" class="tab-content">
+            <!-- Dados do Paciente -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs space-y-1.5">
+                <h3 class="font-bold text-indigo-800 text-sm border-b border-slate-200 pb-1 mb-2">1. DADOS DE IDENTIFICAÇÃO DO CASO</h3>
+                <p><strong>Paciente/Código:</strong> <span id="pdf-paciente-nome"></span></p>
+                <p><strong>Abordagem Teórica Utilizada:</strong> <span id="pdf-abordagem-nome"></span></p>
+                <p><strong>Queixa Principal:</strong> <span id="pdf-queixa"></span></p>
+                <p><strong>Objetivo Terapêutico:</strong> <span id="pdf-objetivo"></span></p>
+            </div>
+
+            <!-- Histórico Completo de Sessões Registradas -->
+            <div class="space-y-2">
+                <h3 class="font-bold text-indigo-800 text-sm border-b border-slate-200 pb-1">2. HISTÓRICO DAS SESSÕES DE EVOLUÇÃO</h3>
+                <div id="pdf-historico-sessoes" class="space-y-3 text-xs">
+                    <!-- Preenchido dinamicamente no JS -->
+                </div>
+            </div>
+
+            <!-- Análise e Formulação Teórica do Supervisor -->
+            <div class="space-y-2">
+                <h3 class="font-bold text-indigo-800 text-sm border-b border-slate-200 pb-1">3. FORMULAÇÃO TEÓRICA & ORIENTAÇÃO DO SUPERVISOR</h3>
+                <div id="pdf-conteudo-analise" class="text-xs leading-relaxed space-y-4">
+                    <!-- Conteúdo do Supervisor Injetado -->
+                </div>
+            </div>
+
+            <!-- Rodapé Ético -->
+            <div class="border-t border-slate-200 pt-4 text-[10px] text-slate-400 text-center space-y-1">
+                <p>🔒 Documento sigiloso para uso exclusivo do profissional de saúde mental em acompanhamento supervisor.</p>
+                <p>Gerado via Copiloto Clínico - Software de Apoio à Decisão Terapêutica.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Navegação Inferior -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-40">
+        <div class="max-w-md mx-auto grid grid-cols-4 text-center py-2">
+            <button onclick="mudarAba('tab-home', this)" class="nav-btn text-indigo-600 flex flex-col items-center justify-center gap-0.5">
+                <span class="text-xl">🧠</span>
+                <span class="text-[11px] font-medium">Home</span>
+            </button>
+
+            <button onclick="mudarAba('tab-pacientes', this)" class="nav-btn text-slate-400 flex flex-col items-center justify-center gap-0.5">
+                <span class="text-xl">👤</span>
+                <span class="text-[11px] font-medium">Pacientes</span>
+            </button>
+
+            <button onclick="mudarAba('tab-sessao', this)" class="nav-btn text-slate-400 flex flex-col items-center justify-center gap-0.5">
+                <span class="text-xl">📝</span>
+                <span class="text-[11px] font-medium">Sessão</span>
+            </button>
+
+            <button onclick="mudarAba('tab-supervisor', this)" class="nav-btn text-slate-400 flex flex-col items-center justify-center gap-0.5">
+                <span class="text-xl">💬</span>
+                <span class="text-[11px] font-medium">Supervisor</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        document.getElementById('sessao-data').value = new Date().toLocaleDateString('pt-BR');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarListasEPacientes();
+        });
+
+        function mudarAba(abaId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(abaId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-600');
+                btn.classList.add('text-slate-400');
+            });
+
+            if(btnElement) {
+                btnElement.classList.remove('text-slate-400');
+                btnElement.classList.add('text-indigo-600');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function salvarNovoPaciente() {
+            const nome = document.getElementById('paciente-nome').value.trim();
+            const abordagem = document.getElementById('paciente-abordagem').value;
+            const queixa = document.getElementById('paciente-queixa').value.trim();
+            const objetivo = document.getElementById('paciente-objetivo').value.trim();
+
+            if (!nome) {
+                alert("Insira pelo menos as iniciais ou nome do paciente.");
+                return;
+            }
+
+            let pacientes = JSON.parse(localStorage.getItem('tcc_pacientes') || '[]');
+            const novo = { id: Date.now().toString(), nome, abordagem, queixa, objetivo };
+            pacientes.push(novo);
+            loc  <div id="tab-sessoes" class="tab-content">
             <div class="card">
                 <h3 style="font-size: 1rem; margin-bottom: 12px;"><i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Registrar Nova Sessão</h3>
                 <div class="form-group">
