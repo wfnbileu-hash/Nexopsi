@@ -1,4 +1,406 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NexoPsi — Inteligência e Raciocínio Clínico</title>
+
+<!-- SDKs do Firebase Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#f4f1ff;color:#27324a}
+.hidden{display:none!important}
+.screen{min-height:100vh;padding:22px 16px 90px 16px}
+.cover{background:linear-gradient(150deg,#1e1b4b 0%,#312e81 40%,#4338ca 100%);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px 20px;text-align:center}
+.badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:0.5px;color:#c7d2fe;margin-bottom:20px;text-transform:uppercase}
+.logo-container{width:88px;height:88px;border-radius:28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 20px;box-shadow:0 12px 30px rgba(99,102,241,0.4)}
+h1.hero-title{font-size:36px;font-weight:800;margin:0 0 10px;letter-spacing:-0.5px;color:#fff}
+.hero-subtitle{font-size:16px;color:#c7d2fe;margin:0 auto 28px;max-width:380px;line-height:1.5;font-weight:400}
+.card{background:#fff;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 8px 25px rgba(108,101,154,0.08);color:#27324a;text-align:left;width:100%;max-width:640px;margin-left:auto;margin-right:auto}
+input,textarea,select{width:100%;padding:12px;border:1px solid #e0e3ee;border-radius:12px;margin:6px 0 14px;font:inherit;background:#fbfbfe;color:#27324a;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.15)}
+textarea{min-height:90px;resize:vertical}
+label{font-size:13px;font-weight:bold;color:#4338ca;display:block;margin-top:4px}
+.btn{width:100%;border:0;border-radius:14px;padding:15px;margin-top:8px;font-weight:bold;font-size:15px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;transition:opacity 0.2s}
+.btn:hover{opacity:0.95}
+.btn.alt{background:#eef0ff;color:#4f46e5}
+.btn.danger{background:#ffe4e6;color:#e11d48;border:1px solid #fecdd3}
+.btn:disabled{opacity:0.6;cursor:not-allowed}
+.link{text-align:center;color:#6366f1;font-weight:bold;margin-top:16px;cursor:pointer}
+.top{display:flex;align-items:center;justify-content:space-between;max-width:640px;margin:0 auto 10px auto}
+.top h2{margin:0;font-size:21px;color:#1e1b4b}
+.iconbtn{border:0;background:#fff;border-radius:12px;padding:10px 14px;cursor:pointer;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,0.05);color:#4f46e5;font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{padding:15px;border-radius:18px;background:#fff;box-shadow:0 4px 15px rgba(108,101,154,0.06);text-align:center}
+.mini b{display:block;font-size:24px;color:#4f46e5}
+.muted{color:#778096;font-size:13px;line-height:1.45}
+.error-msg{color:#e11d48;font-size:13px;margin-top:10px;text-align:center;font-weight:bold;word-break:break-word}
+.section-title{border-bottom:2px solid #eef0ff;padding-bottom:6px;margin:18px 0 12px;color:#312e81;font-size:15px}
+
+/* Navegação Inferior (6 abas fixas) */
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;padding:8px 6px;display:grid;grid-template-columns:repeat(6,1fr);box-shadow:0 -4px 20px rgba(0,0,0,0.08);z-index:1000}
+.nav button{border:0;background:none;padding:6px 2px;font-size:10px;color:#6d7487;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav button i{font-size:16px}
+.nav .active{color:#4f46e5;font-weight:bold}
+
+/* Caixas de Alerta e Resultado */
+.alert-box{padding:14px;border-radius:14px;margin:14px 0;font-size:13px;line-height:1.5}
+.alert-box.warning{background:#fffbeb;border:1px solid #fef3c7;color:#92400e}
+.alert-box.danger{background:#fef2f2;border:1px solid #fee2e2;color:#991b1b}
+.result-box{background:#fcfaff;border-left:4px solid #6366f1;padding:14px;margin:14px 0;border-radius:0 14px 14px 0}
+.result-box h4{margin:0 0 8px;color:#312e81;font-size:15px}
+.result-box p,.result-box ul{margin:0;font-size:14px;line-height:1.55;color:#334155}
+.result-box ul{padding-left:18px;margin-top:6px}
+.result-box li{margin-bottom:6px}
+.document-preview{background:#fff;border:1px solid #cbd5e1;padding:24px;border-radius:12px;font-family:"Times New Roman",serif;color:#0f172a;line-height:1.6;margin-top:14px;font-size:15px}
+</style>
+</head>
+<body>
+
+<!-- TELA DE LOGIN -->
+<div id="login" class="screen cover" style="padding-bottom:32px;">
+  <div class="badge">IA &amp; Supervisão Clínica</div>
+  <div class="logo-container">🧠</div>
+  <h1 class="hero-title">NexoPsi</h1>
+  <div class="hero-subtitle">Conectando os pontos do seu raciocínio clínico.</div>
+  
+  <form class="card" id="form-login">
+    <label>E-mail profissional</label>
+    <input id="le" type="email" placeholder="seuemail@exemplo.com" required>
+    <label>Senha</label>
+    <input id="lp" type="password" placeholder="••••••••" required>
+    <button class="btn" id="btn-login" type="submit">Entrar no NexoPsi</button>
+    <div id="login-err" class="error-msg"></div>
+    <div class="link" onclick="showAuthScreen('register')">Criar nova conta de acesso</div>
+  </form>
+</div>
+
+<!-- TELA DE CADASTRO -->
+<div id="register" class="screen cover hidden" style="padding-bottom:32px;">
+  <div class="logo-container">🧠</div>
+  <h1 class="hero-title">Criar Conta</h1>
+  
+  <form class="card" id="form-reg">
+    <label>Nome Completo</label>
+    <input id="rn" type="text" placeholder="Dr.(a) Seu Nome" required>
+    <label>E-mail</label>
+    <input id="re" type="email" placeholder="seuemail@exemplo.com" required>
+    <label>Senha (mínimo 6 caracteres)</label>
+    <input id="rp" type="password" placeholder="Crie uma senha" required minlength="6">
+    <label>Abordagem Teórica Principal</label>
+    <select id="ra">
+      <option value="TCC">TCC (Cognitivo-Comportamental)</option>
+      <option value="Psicanálise">Psicanálise</option>
+      <option value="Humanista">Humanista / Gestalt</option>
+      <option value="Comportamental">Análise do Comportamento</option>
+      <option value="Sistêmica">Sistêmica</option>
+    </select>
+    <button class="btn" id="btn-reg" type="submit">Finalizar Cadastro</button>
+    <div id="reg-err" class="error-msg"></div>
+    <div class="link" onclick="showAuthScreen('login')">Voltar ao Login</div>
+  </form>
+</div>
+
+<!-- APLICAÇÃO PRINCIPAL -->
+<div id="app" class="hidden">
+  <main id="content"></main>
+  
+  <!-- BARRA DE NAVEGAÇÃO INFERIOR (6 ABAS) -->
+  <nav class="nav">
+    <button onclick="home()" id="nh"><i class="fa-solid fa-house"></i><span>Início</span></button>
+    <button onclick="patients()" id="np"><i class="fa-solid fa-users"></i><span>Pacientes</span></button>
+    <button onclick="sessionTab()" id="ns"><i class="fa-solid fa-pen-to-square"></i><span>Sessão</span></button>
+    <button onclick="supervisorTab()" id="nx"><i class="fa-solid fa-brain"></i><span>NexoPsi</span></button>
+    <button onclick="documentsTab()" id="nd"><i class="fa-solid fa-file-lines"></i><span>Docs</span></button>
+    <button onclick="materialsTab()" id="nm"><i class="fa-solid fa-book-open"></i><span>Materiais</span></button>
+  </nav>
+</div>
+
+<script>
+// ==========================================
+// CONFIGURAÇÃO DO FIREBASE
+// ==========================================
+var firebaseConfig = {
+  apiKey: "AIzaSyCfIO79wUpw8HimL0aH322O478dJQzVbM0",
+  authDomain: "nexopsi-f4c1f.firebaseapp.com",
+  projectId: "nexopsi-f4c1f",
+  storageBucket: "nexopsi-f4c1f.firebasestorage.app",
+  messagingSenderId: "390111386116",
+  appId: "1:390111386116:web:c1c8695a17a66a57f67351"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+var P = [];
+var S = [];
+var U = null;
+
+var MATERIALS_DB = [
+  {
+    category: "Comportamental / Ansiedade",
+    title: "Técnica de Grounding (5-4-3-2-1)",
+    desc: "Exercício sensorial rápido para crises de ansiedade aguda e ataques de pânico.",
+    content: "Instruções para o paciente:\n1. Olhe ao redor e cite 5 coisas que você consegue VER.\n2. Toque em 4 coisas que você consegue SENTIR (tecido, mesa, cabelo).\n3. Escute e identifique 3 sons que você consegue OUVIR.\n4. Sinta 2 cheiros ao seu redor.\n5. Saboreie 1 coisa ou sinta o gosto na boca."
+  },
+  {
+    category: "Sono & Higiene",
+    title: "Guia de Higiene do Sono",
+    desc: "Diretrizes comportamentais para melhora da insônia e qualidade do descanso.",
+    content: "Recomendações:\n• Manter horários regulares para deitar e levantar.\n• Evitar telas (celular, TV) por pelo menos 45 minutos antes de dormir.\n• Utilizar o quarto estritamente para dormir e descanso.\n• Evitar cafeína e refeições pesadas à noite."
+  },
+  {
+    category: "TCC / Cognitiva",
+    title: "Registro de Pensamentos Disfuncionais (RPD Simplificado)",
+    desc: "Modelo em branco para reestruturação cognitiva de pensamentos automáticos.",
+    content: "Estrutura do RPD:\n1. Situação: O que estava acontecendo quando a emoção surgiu?\n2. Pensamento Automático: O que passou pela sua mente naquele momento?\n3. Emoção: Qual sentimento (ansiedade, tristeza) e intensidade (0-10)?\n4. Pensamento Alternativo: Existe outra forma realista de ver essa situação?"
+  },
+  {
+    category: "Regulação Emocional",
+    title: "Respiração Diafragmática Lenta (4x4)",
+    desc: "Técnica de respiração para ativação do sistema parassimpático e redução de taquicardia.",
+    content: "Como praticar:\n1. Inspire pelo nariz contando devagar até 4 segundos.\n2. Segure o ar nos pulmões por 4 segundos.\n3. Expire suavemente pela boca contando até 4 segundos.\n4. Mantenha os pulmões vazios por 4 segundos antes de repetir."
+  }
+];
+
+function $(id){ return document.getElementById(id); }
+
+function esc(str){
+  if (!str) return "";
+  return String(str)
+    .split("&").join("&amp;")
+    .split("<").join("&lt;")
+    .split(">").join("&gt;")
+    .split('"').join("&quot;");
+}
+
+function showAuthScreen(screen){
+  $("login").classList.toggle("hidden", screen !== "login");
+  $("register").classList.toggle("hidden", screen !== "register");
+  $("app").classList.toggle("hidden", true);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  var formLogin = $("form-login");
+  if (formLogin) formLogin.addEventListener("submit", function(e) { e.preventDefault(); handleLogin(); });
+  var formReg = $("form-reg");
+  if (formReg) formReg.addEventListener("submit", function(e) { e.preventDefault(); handleRegister(); });
+});
+
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    db.collection("users").doc(user.uid).get().then(function(doc) {
+      U = Object.assign({ uid: user.uid }, doc.exists ? doc.data() : { name: user.email, approach: "TCC" });
+      return loadUserData();
+    }).then(function() {
+      $("login").classList.add("hidden");
+      $("register").classList.add("hidden");
+      $("app").classList.remove("hidden");
+      home();
+    }).catch(function(e) {
+      U = { uid: user.uid, name: user.email, approach: "TCC" };
+      $("login").classList.add("hidden");
+      $("register").classList.add("hidden");
+      $("app").classList.remove("hidden");
+      home();
+    });
+  } else {
+    showAuthScreen("login");
+  }
+});
+
+function handleLogin() {
+  var email = $("le").value.trim();
+  var senha = $("lp").value.trim();
+  var errDiv = $("login-err");
+  var btn = $("btn-login");
+
+  errDiv.innerText = "";
+  btn.innerText = "Entrando...";
+  btn.disabled = true;
+
+  auth.signInWithEmailAndPassword(email, senha).catch(function(error) {
+    btn.innerText = "Entrar no NexoPsi";
+    btn.disabled = false;
+    errDiv.innerText = "Erro ao entrar: " + error.message;
+  });
+}
+
+function handleRegister() {
+  var nome = $("rn").value.trim();
+  var email = $("re").value.trim();
+  var senha = $("rp").value.trim();
+  var abordagem = $("ra").value;
+  var errDiv = $("reg-err");
+  var btn = $("btn-reg");
+
+  errDiv.innerText = "";
+  btn.innerText = "Criando conta...";
+  btn.disabled = true;
+
+  auth.createUserWithEmailAndPassword(email, senha).then(function(userCredential) {
+    var user = userCredential.user;
+    if (user.updateProfile) user.updateProfile({ displayName: nome });
+
+    return db.collection("users").doc(user.uid).set({
+      name: nome, email: email, approach: abordagem, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }).catch(function(error) {
+    btn.innerText = "Finalizar Cadastro";
+    btn.disabled = false;
+    errDiv.innerText = "Erro no cadastro: " + error.message;
+  });
+}
+
+function logout() { auth.signOut().then(function() { location.reload(); }); }
+
+function loadUserData() {
+  if (!U || !U.uid) return Promise.resolve();
+  var userRef = db.collection("users").doc(U.uid);
+  
+  return Promise.all([
+    userRef.collection("patients").get(),
+    userRef.collection("sessions").get()
+  ]).then(function(results) {
+    P = results[0].docs.map(function(doc) { return Object.assign({ id: doc.id }, doc.data()); });
+    S = results[1].docs.map(function(doc) { return Object.assign({ id: doc.id }, doc.data()); });
+  });
+}
+
+function setActiveNav(x){
+  ["nh","np","ns","nx","nd","nm"].forEach(function(i){ if($(i)) $(i).classList.remove("active"); });
+  if($(x)) $(x).classList.add("active");
+}
+
+// ==========================================
+// ABA 1: INÍCIO
+// ==========================================
+function home(){
+  setActiveNav("nh");
+  var userName = U && U.name ? U.name : "Profissional";
+  var approach = U && U.approach ? U.approach : "TCC";
+  
+  $("content").innerHTML = 
+    '<div class="screen">' +
+      '<div class="top">' +
+        '<div><h2>Olá, ' + esc(userName) + ' 👋</h2><span class="muted">Abordagem: <b>' + esc(approach) + '</b></span></div>' +
+        '<button class="iconbtn" title="Sair" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>' +
+      '</div>' +
+      '<div class="grid" style="margin-top:15px; max-width:640px; margin-left:auto; margin-right:auto;">' +
+        '<div class="mini"><b>' + P.length + '</b><span class="muted" style="font-size:12px;">Pacientes</span></div>' +
+        '<div class="mini"><b>' + S.length + '</b><span class="muted" style="font-size:12px;">Sessões</span></div>' +
+      '</div>' +
+      '<div class="card">' +
+        '<h3>🧠 NexoPsi Copiloto &amp; Supervisão</h3>' +
+        '<p class="muted">Raciocínio Clínico Avançado, Conceituação e Análise Teórica integrada.</p>' +
+        '<button class="btn" onclick="supervisorTab()">Gerar Supervisão Clínica</button>' +
+      '</div>' +
+      '<div class="card">' +
+        '<h3>📄 Emissão Rápida &amp; Materiais</h3>' +
+        '<p class="muted">Gere documentos ou acesse fichas de psicoeducação para os pacientes.</p>' +
+        '<div class="grid" style="margin-top:10px;">' +
+          '<button class="btn alt" onclick="documentsTab()">Emitir Documento</button>' +
+          '<button class="btn alt" onclick="materialsTab()">Banco de Materiais</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+// ==========================================
+// ABA 2: PACIENTES
+// ==========================================
+function patients(searchTerm){
+  setActiveNav("np");
+  searchTerm = searchTerm ? searchTerm.toLowerCase() : "";
+
+  var filteredPatients = P.filter(function(p){
+    var nameMatch = (p.name || "").toLowerCase().indexOf(searchTerm) !== -1;
+    var codeMatch = (p.code || "").toLowerCase().indexOf(searchTerm) !== -1;
+    return nameMatch || codeMatch;
+  });
+
+  var listHtml = filteredPatients.map(function(p){
+    return '<div style="border-bottom:1px solid #eee; padding:12px 0;">' +
+      '<b>' + esc(p.name) + '</b>' +
+      '<div class="muted">' + esc(p.code || p.id) + ' · ' + esc(p.age ? p.age + ' anos' : 'Sem idade') + ' · ' + esc(p.profession || 'Profissão n/i') + '</div>' +
+      '<button class="btn alt" style="margin-top:8px;" onclick="viewPatientDetail(\'' + esc(p.id) + '\')">Abrir prontuário completo</button>' +
+    '</div>';
+  }).join("") || '<p class="muted">Nenhum paciente encontrado.</p>';
+
+  $("content").innerHTML = 
+    '<div class="screen">' +
+      '<div class="top">' +
+        '<h2>Pacientes &amp; Anamnese</h2>' +
+        '<button class="iconbtn" onclick="addPForm()"><i class="fa-solid fa-plus"></i> Novo</button>' +
+      '</div>' +
+      '<div class="card">' +
+        '<input id="patient_search" placeholder="🔍 Buscar por nome ou sigla..." value="' + esc(searchTerm) + '" oninput="patients(this.value)" style="margin-bottom:12px;">' +
+        listHtml +
+      '</div>' +
+    '</div>';
+}
+
+function addPForm(idToEdit){
+  setActiveNav("np");
+  var p = idToEdit ? P.find(function(x) { return x.id === idToEdit; }) : null;
+
+  $("content").innerHTML = 
+    '<div class="screen">' +
+      '<div class="top">' +
+        '<h2>' + (p ? 'Editar Prontuário' : 'Novo Paciente — Anamnese') + '</h2>' +
+        '<button class="iconbtn" onclick="' + (p ? 'viewPatientDetail(\'' + esc(p.id) + '\)' : 'patients()') + '">← Voltar</button>' +
+      '</div>' +
+      '<div class="card">' +
+        '<h4 class="section-title">1. Dados Identificatórios</h4>' +
+        '<label>Código Fictício / Sigla*</label>' +
+        '<input id="p_code" value="' + esc(p ? p.code : '') + '" placeholder="Ex: P-01 ou J.S." required>' +
+        '<label>Nome ou Iniciais*</label>' +
+        '<input id="p_name" value="' + esc(p ? p.name : '') + '" placeholder="Ex: João Silva" required>' +
+        '<div class="grid">' +
+          '<div><label>Idade</label><input id="p_age" type="number" value="' + esc(p ? p.age : '') + '" placeholder="Ex: 34"></div>' +
+          '<div><label>Profissão</label><input id="p_prof" value="' + esc(p ? p.profession : '') + '" placeholder="Ex: Engenheiro"></div>' +
+        '</div>' +
+        
+        '<h4 class="section-title">2. Anamnese Clínica</h4>' +
+        '<label>Queixa Principal / Motivo da Consulta</label>' +
+        '<textarea id="p_queixa" placeholder="Descreva o motivo que trouxe o paciente à terapia...">' + esc(p ? p.queixa : '') + '</textarea>' +
+        '<label>Histórico da Queixa &amp; Sintomas</label>' +
+        '<textarea id="p_hist" placeholder="Início dos sintomas, gatilhos conhecidos...">' + esc(p ? p.historico : '') + '</textarea>' +
+        '<label>Objetivos Terapêuticos</label>' +
+        '<textarea id="p_obj" placeholder="O que o paciente espera alcançar?">' + esc(p ? p.objetivos : '') + '</textarea>' +
+        '<label>Acompanhamento Médico / Medicamentos em uso</label>' +
+        '<input id="p_med" value="' + esc(p ? p.medicamentos : '') + '" placeholder="Ex: Sertralina 50mg">' +
+        '<label>Rede de Apoio &amp; Contexto Familiar</label>' +
+        '<textarea id="p_apoio" placeholder="Relações familiares e suporte emocional...">' + esc(p ? p.redeApoio : '') + '</textarea>' +
+
+        '<button class="btn" onclick="savePatient(\'' + esc(idToEdit || '') + '\')">Salvar Prontuário</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function savePatient(idToEdit){
+  var code = $("p_code").value.trim();
+  var name = $("p_name").value.trim();
+  var age = $("p_age").value.trim();
+  var profession = $("p_prof").value.trim();
+  var queixa = $("p_queixa").value.trim();
+  var historico = $("p_hist").value.trim();
+  var objetivos = $("p_obj").value.trim();
+  var medicamentos = $("p_med").value.trim();
+  var redeApoio = $("p_apoio").value.trim();
+
+  if(!code || !name){
+    alert("Preencha pelo<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
