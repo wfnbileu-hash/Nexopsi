@@ -712,7 +712,7 @@ function renderStructuredAnalysis(p, approach, ss, aiText){
   }).join("");
 
   chatHistory = [
-    { sender: 'bot', text: 'Supervisão clínica isolada para ' + p.name + '. Esta conversa utiliza somente os dados deste caso. Como posso ajudar a refinar o manejo ou preparar a próxima sessão?' }
+    { sender: 'bot', text: 'Supervisão clínica gerada exclusivamente para ' + p.name + '! Como posso te ajudar a refinar o manejo ou preparar a próxima sessão?' }
   ];
 
   $("out").innerHTML = 
@@ -724,9 +724,9 @@ function renderStructuredAnalysis(p, approach, ss, aiText){
 
       alertsHtml +
 
-      '<div class="result-box" style="border-left-color: #8b5cf6; white-space: pre-line; font-size: 14.5px; line-height: 1.6;">' +
+      '<div class="result-box" style="border-left-color: #8b5cf6; font-size: 14.5px; line-height: 1.6;">' +
         '<h4>📋 Análise Detalhada &amp; Raciocínio Clínico (Gemini IA)</h4>' +
-        '<p>' + esc(aiText) + '</p>' +
+        '<div>' + aiText + '</div>' +
       '</div>' +
 
       '<div class="action-bar">' +
@@ -743,6 +743,7 @@ function renderStructuredAnalysis(p, approach, ss, aiText){
     '</div>';
 
   renderChat();
+
 }
 
 async function sendAIChatMessage(patientId, approach){
