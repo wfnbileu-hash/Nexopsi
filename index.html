@@ -764,10 +764,10 @@ async function sendAIChatMessage(patientId, approach){
   }).join("\n");
 
   // Prompt ajustado para focar em respostas curtas, diretas e pragmáticas
-  var chatPrompt = "Atue estritamente como um Supervisor Clínico sênior especialista na abordagem " + approach + ".\n" +
-    "Paciente em foco: " + (p ? p.name : "Geral") + " | Queixa: " + (p ? p.queixa : "N/I") + ".\n" +
-    "Histórico recente da conversa:\n" + historicoRecente + "\n\n" +
-    "Responda à última pergunta do terapeuta ('" + msg + "') de forma **curta, direta e objetiva** (máximo de 3 a 4 frases ou tópicos rápidos). Evite textos longos ou estruturados como laudo; foque numa orientação prática e imediata de manejo clínico para o consultório.";
+    var chatPrompt = "Atue estritamente como um Supervisor Clínico sênior especialista na abordagem " + approach + ".\n" +
+    "Paciente: " + (p ? p.name : "Geral") + " | Queixa: " + (p ? p.queixa : "N/I") + ".\n" +
+    "Histórico:\n" + historicoRecente + "\n\n" +
+    "Responda à pergunta do terapeuta ('" + msg + "') em NO MÁXIMO 3 linhas ou tópicos curtíssimos. Seja direto como uma mensagem rápida de WhatsApp. Sem introduções longas, sem saudações e sem tom de laudo, apenas a orientação prática imediata:";
 
   var reply = await callGeminiAPI(chatPrompt);
   
