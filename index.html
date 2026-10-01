@@ -1006,17 +1006,20 @@ function saveProfileData() {
     if (user) {
       const db = firebase.firestore();
       db.collection("users").doc(user.uid).get().then((doc) => {
-        // Se o documento não existe OU se os termos não foram aceitos
+        // Se o documento NÃO existe, ou se o campo termsAccepted não é true
         if (!doc.exists || doc.data().termsAccepted !== true) {
           document.getElementById('termsModal').style.display = 'flex';
         } else {
           document.getElementById('termsModal').style.display = 'none';
         }
       }).catch((error) => {
-        console.error("Erro ao verificar termos no Firestore:", error);
-        // Em caso de erro na leitura, por segurança mostramos o modal para evitar bypass
+        console.error("Erro ao verificar termos:", error);
+        // Se der erro (ex: falha de permissão temporária), exibe o modal por segurança
         document.getElementById('termsModal').style.display = 'flex';
       });
+    } else {
+      // Se não houver utilizador logado, garante que o modal fica oculto
+      document.getElementById('termsModal').style.display = 'none';
     }
   });
 
@@ -1037,7 +1040,7 @@ function saveProfileData() {
         termsAccepted: true,
         termsAcceptedAt: new Date().toISOString()
       }, { merge: true }).then(() => {
-        // Oculta o modal com sucesso
+        // Oculta o modal com sucesso após gravar no Firestore
         document.getElementById('termsModal').style.display = 'none';
       }).catch((error) => {
         alert("Erro ao gravar aceite. Tente novamente.");
