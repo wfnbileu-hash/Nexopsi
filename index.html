@@ -760,25 +760,31 @@ async function sendAIChatMessage(patientId, approach){
   var ss = S.filter(function(x) { return x.pid === patientId; });
   
   var historicoRecente = chatHistory.slice(-6).map(function(m){
-    return (m.sender === 'user' ? 'Terapeuta: ' : 'Supervisor IA: ') + m.text;
+    return (m.sender === 'user' ? 'Terapeuta: ' : 'Supervisor: ') + m.text;
   }).join("\n");
 
-  var chatPrompt = "Atue estritamente como um Supervisor Clínico sênior especialista na abordagem " + approach + ".\n" +
-    "Paciente em foco: " + (p ? p.name : "Geral") + " | Queixa: " + (p ? p.queixa : "N/I") + ".\n" +
-    "Histórico recente da conversa:\n" + historicoRecente + "\n\n" +
-    "Responda à pergunta direta do terapeuta ('" + msg + "') com precisão cirúrgica e foco clínico absoluto. " +
-    "Se a pergunta envolver risco iminente ou ideação suicida, oriente imediatamente o protocolo de segurança (avaliação de plano, rede de apoio, CVV 188). " +
-    "Se for sobre conduta na sessão, dê o direcionamento exato em no máximo 3 frases curtas, sem enrolação:";
+  var sessoesResumo = ss.map(function(s, i){ 
+    return "Sessão " + (i+1) + ": " + s.event; 
+  }).join(" | ");
+
+  // Prompt cirúrgico, restritivo e focado no contexto do paciente atual
+  var chatPrompt = "Você é um Supervisor Clínico sênior especialista em " + approach + ".\n" +
+    "Contexto do Paciente (" + (p ? p.name : "Geral") + "):\n" +
+    "- Queixa: " + (p ? p.queixa : "N/I") + "\n" +
+    "- Histórico de Sessões: " + (sessoesResumo || "Nenhuma registrada") + "\n\n" +
+    "Histórico do chat:\n" + historicoRecente + "\n\n" +
+    "Instrução obrigatória:\n" +
+    "Responda à última mensagem do terapeuta ('" + msg + "') de forma extremamente objetiva, prática e direta ao ponto (máximo de 2 a 3 frases). " +
+    "Não invente dados que não constam no histórico do paciente e não dê respostas genéricas. Diga exatamente o que o terapeuta deve fazer ou perguntar na sessão:";
 
   var reply = await callGeminiAPI(chatPrompt);
   
-  // Fallback inteligente caso a rede falhe, baseado na pergunta do usuário
   if (!reply) {
-    var lowerMsg = msg.toLowerCase();
-    if (lowerMsg.indexOf("suicid") !== -1 || lowerMsg.indexOf("morrer") !== -1 || lowerMsg.indexOf("vida") !== -1) {
-      reply = "🚨 Acolha o sofrimento sem julgamentos, avalie imediatamente a presença de plano ativo ou intenção letal, acione a rede de apoio familiar e oriente sobre o CVV (188).";
+    var lower = msg.toLowerCase();
+    if (lower.indexOf("suicid") !== -1 || lower.indexOf("morrer") !== -1) {
+      reply = "Avalie imediatamente a presença de plano ativo, contrate o acordo de segurança e acione a rede de apoio.";
     } else {
-      reply = "Direcione o foco para o evento gatilho mais recente relatado na última sessão e questione o paciente sobre o pensamento automático associado.";
+      reply = "Questione o paciente sobre o principal gatilho emocional ocorrido desde a última sessão.";
     }
   }
 
