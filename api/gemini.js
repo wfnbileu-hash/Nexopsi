@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt, abordagem } = req.body;
+    const { prompt, abordagem, historico } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -136,18 +136,34 @@ Estruture sua resposta EXCLUSIVAMENTE nos seguintes itens em HTML limpo:
       }
     }
 
-    const systemPrompt = obterPromptAbordagem(abordagem);
-    const payload = {
-      contents: [{
+    // Configuração dinâmica do payload: 
+    // Se vier o histórico do chat, usa-o. Se for o parecer inicial, monta o prompt com a abordagem.
+    let contents = [];
+
+    if (historico && Array.isArray(historico)) {
+      contents = historico;
+    } else if (abordagem && prompt) {
+      const systemPrompt = obterPromptAbordagem(abordagem);
+      contents = [{
         role: "user",
         parts: [
           { text: systemPrompt },
           { text: prompt }
         ]
-      }]
-    };
+      }];
+    } else {
+      // Chat livre (pergunta direta ao supervisor sem template fixo de parecer)
+      contents = [{
+        role: "user",
+        parts: [
+          { text: "Você é um Supervisor Clínico experiente. Responda à seguinte dúvida do terapeuta de forma técnica, empática e direta: " + prompt }
+        ]
+      }];
+    }
 
-        const modelos = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'];
+    const payload = { contents };
+
+    const modelos = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'];
     let data = null;
     let lastError = "";
 
@@ -172,7 +188,7 @@ Estruture sua resposta EXCLUSIVAMENTE nos seguintes itens em HTML limpo:
     }
 
     if (!data) {
-      return res.status(500).json({ error: "Erro ao gerar supervisão: " + lastError });
+      return res.status(500).json({ error: "Erro ao gerar resposta da IA: " + lastError });
     }
 
     return res.status(200).json(data);
@@ -180,4 +196,4 @@ Estruture sua resposta EXCLUSIVAMENTE nos seguintes itens em HTML limpo:
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-          }
+}
