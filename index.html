@@ -306,21 +306,31 @@ function home(){
   nav("nh");
   var userName = U && U.name ? U.name : "Profissional";
   var approach = U && U.approach ? U.approach : "TCC";
-  
-  $("content").innerHTML = 
-    '<div class="top">' +
-      '<div><h2>Olá, ' + esc(userName) + ' 👋</h2><span class="muted">Abordagem Principal: <b>' + esc(approach) + '</b></span></div>' +
-      '<button class="iconbtn" title="Sair" onclick="logout()">🚪</button>' +
-    '</div>' +
-    '<div class="grid" style="margin-top:15px;">' +
-      '<div class="mini"><b>' + P.length + '</b>pacientes</div>' +
-      '<div class="mini"><b>' + S.length + '</b>sessões</div>' +
-    '</div>' +
-    '<div class="card">' +
-      '<h3>🧠 NexoPsi Copiloto &amp; Supervisão</h3>' +
-      '<p class="muted">Raciocínio Clínico Avançado, Riscos, Conceituação e Plano de Consulta.</p>' +
-      '<button class="btn" onclick="supervisor()">Gerar Supervisão Clínica</button>' +
-    '</div>' +
+      $("content").innerHTML = 
+        '<div class="top">' +
+            '<div><h2>Olá, ' + esc(userName) + ' 👋</h2><span class="muted">Abordagem: ' + esc(approach) + '</span></div>' +
+            '<div style="display: flex; gap: 8px;">' +
+                '<button class="iconbtn" title="Meus Dados Profissionais" onclick="renderProfileSettings()">⚙️</button>' +
+                '<button class="iconbtn" title="Sair" onclick="logout()">🚪</button>' +
+            '</div>' +
+        '</div>' +
+        '<div class="grid" style="margin-top:15px;">' +
+            '<div class="mini"><b>' + P.length + '</b>pacientes</div>' +
+            '<div class="mini"><b>' + S.length + '</b>sessões</div>' +
+        '</div>' +
+        '<div class="card">' +
+            '<h3>🧠 NexoPsi Copiloto &amp; Supervisão</h3>' +
+            '<p class="muted">Raciocínio Clínico Avançado, Riscos, Conceituação e Plano de Consulta.</p>' +
+            '<button class="btn" onclick="supervisor()">Gerar Supervisão Clínica</button>' +
+        '</div>' +
+        '<div class="card">' +
+            '<h3>📄 Emissão Rápida &amp; Materiais</h3>' +
+            '<p class="muted">Gere atestados, declarações ou acesse fichas de psicoeducação para os pacientes.</p>' +
+            '<div class="grid" style="margin-top:10px;">' +
+                '<button class="btn alt" onclick="documentsTab()">Emitir Documento</button>' +
+                '<button class="btn alt" onclick="materialsTab()">Banco de Materiais</button>' +
+            '</div>' +
+        '</div>';
     '<div class="card">' +
       '<h3>📄 Emissão Rápida &amp; Materiais</h3>' +
       '<p class="muted">Gere atestados, declarações ou acesse fichas de psicoeducação para os pacientes.</p>' +
