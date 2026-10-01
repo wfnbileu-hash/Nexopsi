@@ -968,5 +968,53 @@ function saveProfileData() {
     });
 }
 </script>
+  <!-- Modal de Aceitação de Termos -->
+<div id="termsModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h2>Termos de Uso e Privacidade</h2>
+    <div class="terms-text-box">
+      <p><strong>1. Aceitação:</strong> Ao utilizar o Nexopsi, concorda com os termos de infraestrutura e o uso ético dos dados.</p>
+      <p><strong>2. Sigilo Profissional:</strong> É de sua inteira responsabilidade zelar pelo sigilo clínico e anonimização dos dados.</p>
+      <p><strong>3. Inteligência Artificial:</strong> Os pareceres gerados via Gemini API são auxiliares; a validação clínica final é do profissional.</p>
+    </div>
+    <label class="checkbox-label">
+      <input type="checkbox" id="acceptTermsCheck"> Li e concordo com os Termos de Uso e Política de Privacidade.
+    </label>
+    <button id="acceptTermsBtn" class="btn-primary" disabled>Continuar</button>
+  </div>
+</div>
+<script>
+  // Verifica o estado de autenticação e os termos
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      const db = firebase.firestore();
+      db.collection("users").doc(user.uid).get().then((doc) => {
+        if (!doc.exists || !doc.data().termsAccepted) {
+          document.getElementById('termsModal').style.display = 'flex';
+        }
+      });
+    }
+  });
+
+  const checkbox = document.getElementById('acceptTermsCheck');
+  const btnContinuar = document.getElementById('acceptTermsBtn');
+
+  checkbox.addEventListener('change', function() {
+    btnContinuar.disabled = !this.checked;
+  });
+
+  btnContinuar.addEventListener('click', function() {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const db = firebase.firestore();
+      db.collection("users").doc(user.uid).set({
+        termsAccepted: true,
+        termsAcceptedAt: new Date().toISOString()
+      }, { merge: true }).then(() => {
+        document.getElementById('termsModal').style.display = 'none';
+      });
+    }
+  });
+</script>
 </body>
 </html>
