@@ -619,10 +619,8 @@ async function analyze(){
   var approach = $("ca") ? $("ca").value : "TCC";
 
   if(!id) return alert("Selecione um paciente para analisar.");
-
+  
   var p = P.find(function(x) { return x.id === id; });
-  if(!p) return alert("Paciente não encontrado. Atualize a lista e tente novamente.");
-
   var ss = S.filter(function(x) { return x.pid === id; });
 
   if(!ss.length && !p.queixa) {
@@ -630,70 +628,41 @@ async function analyze(){
     return;
   }
 
-  // ISOLAMENTO DO CASO: limpa qualquer conversa anterior antes de iniciar uma nova supervisão.
-  chatHistory = [];
-  currentCase = null;
+  $("out").innerHTML = '<div class="card muted" style="text-align:center;">🧠 Analisando dados específicos do paciente e redigindo parecer clínico via IA...</div>';
 
-  $("out").innerHTML = '<div class="card muted" style="text-align:center;">🧠 Analisando exclusivamente os dados deste caso...</div>';
-
-  var sessoesTexto = ss.map(function(s, idx){
-    return "Sessão " + (idx+1) + " (" + (s.date ? s.date.split('T')[0] : '') + "): Relato: " + (s.event || 'N/I') + " | Intervenções: " + (s.interventions || 'N/I') + " | Notas: " + (s.notes || 'N/I');
+  var sessoesTexto = ss.map(function(s, idx){ 
+    return "Sessão " + (idx+1) + " (" + (s.date ? s.date.split('T')[0] : '') + "): Relato: " + s.event + " | Intervenções: " + (s.interventions || 'N/I') + " | Notas: " + (s.notes || 'N/I'); 
   }).join("\n\n");
 
-  // Um snapshot imutável do caso atual. O chat reutiliza exatamente este contexto,
-  // em vez de reconstruir um caso diferente a cada pergunta.
-  var caseId = String(p.id || p.code || p.name || "caso-atual");
-  var caseContext =
-    "CASO ISOLADO — ID DO CASO: " + caseId + "\n" +
-    "IMPORTANTE: este é um atendimento independente. Ignore completamente qualquer paciente, análise, diagnóstico, hipótese, sessão, exemplo ou conversa que não esteja descrito abaixo.\n" +
-    "Se alguma informação não estiver abaixo, escreva 'informação não fornecida' em vez de inventá-la.\n\n" +
-    "DADOS EXCLUSIVOS DO CASO\n" +
-    "Nome/Sigla: " + (p.name || 'Não informado') + "\n" +
-    "Idade: " + (p.age || 'Não informada') + "\n" +
-    "Profissão: " + (p.profession || 'Não informada') + "\n" +
-    "Queixa Principal: " + (p.queixa || 'Não informada') + "\n" +
-    "Histórico Clínico: " + (p.historico || 'Não informado') + "\n" +
-    "Objetivos Terapêuticos: " + (p.objetivos || 'Não informados') + "\n" +
-    "Medicamentos/Acompanhamento: " + (p.medicamentos || 'Não informado') + "\n" +
-    "Rede de Apoio: " + (p.redeApoio || 'Não informada') + "\n\n" +
-    "SESSÕES EXCLUSIVAS DESTE CASO\n" +
-    (sessoesTexto || 'Nenhuma sessão registrada ainda.') + "\n";
-
-  currentCase = {
-    id: caseId,
-    patientId: p.id,
-    approach: approach,
-    context: caseContext
-  };
-
-  var promptIA =
-    "Atue como supervisor clínico para apoio ao raciocínio do profissional. Não substitua avaliação clínica, entrevista, instrumentos ou julgamento profissional.\n" +
-    "ABORDAGEM TEÓRICA: " + approach + "\n\n" +
-    caseContext + "\n" +
-    "REGRAS OBRIGATÓRIAS DE ISOLAMENTO:\n" +
-    "1. Use SOMENTE os dados deste CASO ISOLADO.\n" +
-    "2. Não reutilize conteúdo de outros pacientes ou de respostas anteriores.\n" +
-    "3. Não trate hipótese diagnóstica como diagnóstico confirmado. Diferencie fatos, hipóteses e dados ausentes.\n" +
-    "4. Não invente evolução, sessões, sintomas, falas ou eventos que não foram fornecidos.\n\n" +
-    "Produza uma supervisão específica para este caso, incluindo:\n" +
-    "1. Análise longitudinal e conceitualização teórica conectada aos dados.\n" +
-    "2. Padrões, fatores de manutenção e pontos de atenção.\n" +
-    "3. Hipóteses clínicas/diagnósticas a investigar e quais dados ainda faltam para avaliá-las.\n" +
-    "4. Objetivos terapêuticos e opções de manejo coerentes com a abordagem escolhida.\n" +
-    "5. Perguntas socráticas ou perguntas clínicas úteis para a próxima sessão.\n" +
-    "6. Tarefas ou experimentos possíveis, quando apropriados.\n" +
-    "7. Sinais de risco que merecem avaliação direta, se houver elementos no caso.\n";
+  // Prompt original completo que estava a funcionar perfeitamente
+  var promptIA = "Aja estritamente como um Supervisor Clínico sênior e especialista em psicopatologia na abordagem " + approach + ".\n" +
+    "Abaixo estão os dados reais, exclusivos e detalhados do paciente atual. NUNCA utilize respostas genéricas ou padronizadas; baseie sua análise exclusivamente nestes dados:\n\n" +
+    "Dados do Paciente:\n" +
+    "- Nome/Sigla: " + p.name + "\n" +
+    "- Idade: " + (p.age || 'Não informada') + "\n" +
+    "- Profissão: " + (p.profession || 'Não informada') + "\n" +
+    "- Queixa Principal: " + (p.queixa || 'Não informada') + "\n" +
+    "- Histórico Clínico: " + (p.historico || 'Não informado') + "\n" +
+    "- Objetivos: " + (p.objetivos || 'Não informados') + "\n" +
+    "- Medicamentos: " + (p.medicamentos || 'Nenhum') + "\n" +
+    "- Rede de Apoio: " + (p.redeApoio || 'Não informada') + "\n\n" +
+    "Histórico de Sessões Registradas:\n" + (sessoesTexto || 'Nenhuma sessão registrada ainda.') + "\n\n" +
+    "Com base exclusivamente nas particularidades deste paciente acima, forneça:\n" +
+    "1. Hipótese Diagnóstica (DSM-5) específica para este quadro.\n" +
+    "2. Conceituação Cognitiva/Teórica sob a ótica " + approach + " (conectada diretamente aos sintomas descritos).\n" +
+    "3. Parecer clínico detalhado do supervisor analisando o momento atual do caso.\n" +
+    "4. Objetivo estratégico e Script de abertura exato para a próxima consulta.\n" +
+    "5. 2 Ferramentas ou técnicas práticas perfeitamente adequadas a este perfil.";
 
   var aiText = await callGeminiAPI(promptIA);
 
   if(!aiText) {
-    aiText = "A supervisão por IA não pôde ser gerada neste momento. Verifique a função de IA e tente novamente.";
+    aiText = "<h4>Atenção</h4><p>Não foi possível obter resposta automática da IA neste momento devido à instabilidade de rede. Verifique a conexão e tente novamente.</p>";
   }
 
-  // Evita que uma resposta antiga seja renderizada depois de o profissional ter trocado de caso.
-  if(!currentCase || currentCase.patientId !== p.id) return;
-
   renderStructuredAnalysis(p, approach, ss, aiText);
+}
+
 }
 function renderStructuredAnalysis(p, approach, ss, aiText){
   var textAll = ( (p.queixa || "") + " " + (p.historico || "") + " " + ss.map(function(x) { return x.event; }).join(" ") ).toLowerCase();
