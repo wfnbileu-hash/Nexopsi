@@ -1001,53 +1001,43 @@ function saveProfileData() {
 </div>
 
 <script>
-  // Monitoriza o estado de autenticação do Firebase
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      const db = firebase.firestore();
-      db.collection("users").doc(user.uid).get().then((doc) => {
-        // Se o documento NÃO existe, ou se o campo termsAccepted não é true
-        if (!doc.exists || doc.data().termsAccepted !== true) {
-          document.getElementById('termsModal').style.display = 'flex';
-        } else {
-          document.getElementById('termsModal').style.display = 'none';
-        }
-      }).catch((error) => {
-        console.error("Erro ao verificar termos:", error);
-        // Se der erro (ex: falha de permissão temporária), exibe o modal por segurança
-        document.getElementById('termsModal').style.display = 'flex';
-      });
+  // TESTE DIRETO: Força o modal a abrir assim que a página carregar
+  window.addEventListener('DOMContentLoaded', (event) => {
+    console.log("A forçar abertura do modal para teste...");
+    const modal = document.getElementById('termsModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.style.zIndex = '999999'; // Garante que fica por cima de tudo
     } else {
-      // Se não houver utilizador logado, garante que o modal fica oculto
-      document.getElementById('termsModal').style.display = 'none';
+      console.error("ERRO: O elemento 'termsModal' não foi encontrado no HTML!");
     }
   });
 
   const checkbox = document.getElementById('acceptTermsCheck');
   const btnContinuar = document.getElementById('acceptTermsBtn');
 
-  // Habilita ou desabilita o botão conforme a caixinha estiver marcada
-  checkbox.addEventListener('change', function() {
-    btnContinuar.disabled = !this.checked;
-  });
+  if (checkbox && btnContinuar) {
+    checkbox.addEventListener('change', function() {
+      btnContinuar.disabled = !this.checked;
+    });
 
-  // Ação ao clicar em continuar
-  btnContinuar.addEventListener('click', function() {
-    const user = firebase.auth().currentUser;
-    if (user) {
-      const db = firebase.firestore();
-      db.collection("users").doc(user.uid).set({
-        termsAccepted: true,
-        termsAcceptedAt: new Date().toISOString()
-      }, { merge: true }).then(() => {
-        // Oculta o modal com sucesso após gravar no Firestore
-        document.getElementById('termsModal').style.display = 'none';
-      }).catch((error) => {
-        alert("Erro ao gravar aceite. Tente novamente.");
-        console.error(error);
-      });
-    }
-  });
+    btnContinuar.addEventListener('click', function() {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        const db = firebase.firestore();
+        db.collection("users").doc(user.uid).set({
+          termsAccepted: true,
+          termsAcceptedAt: new Date().toISOString()
+        }, { merge: true }).then(() => {
+          document.getElementById('termsModal').style.display = 'none';
+        }).catch((error) => {
+          alert("Erro ao gravar aceite: " + error.message);
+        });
+      } else {
+        alert("Nenhum usuário autenticado no momento do clique.");
+      }
+    });
+  }
 </script>
 </body>
 </html>
