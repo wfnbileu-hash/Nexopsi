@@ -903,6 +903,70 @@ function renderChat(){
   container.scrollTop = container.scrollHeight;
 }
 
+// --- FUNÇÕES DE PERFIL PROFISSIONAL ---
+function renderProfileSettings() {
+    nav(""); // Limpa a seleção da barra inferior
+    var content = `
+        <div class="top">
+            <h2>⚙️ Meus Dados Profissionais</h2>
+            <button class="iconbtn" onclick="home()">← Voltar</button>
+        </div>
+        <div class="card">
+            <p class="muted" style="margin-bottom: 16px;">Estes dados preenchem automaticamente os atestados, declarações e relatórios gerados.</p>
+            
+            <div style="margin-bottom: 14px;">
+                <label>Nome Completo (com prefixo)*</label>
+                <input type="text" id="prof_name" value="${U && U.name ? esc(U.name) : ''}" placeholder="Ex: Dr. Wellington Silva">
+            </div>
+            
+            <div style="margin-bottom: 14px;">
+                <label>Registro Profissional (CRP / CFP)*</label>
+                <input type="text" id="prof_crp" value="${U && U.crp ? esc(U.crp) : ''}" placeholder="Ex: CRP 06/123456">
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+                <label>Abordagem Terapêutica Principal</label>
+                <select id="prof_approach">
+                    <option value="TCC" ${U && U.approach === 'TCC' ? 'selected' : ''}>TCC (Terapia Cognitivo-Comportamental)</option>
+                    <option value="Psicanalise" ${U && U.approach === 'Psicanalise' ? 'selected' : ''}>Psicanálise</option>
+                    <option value="Humanista" ${U && U.approach === 'Humanista' ? 'selected' : ''}>Humanista</option>
+                    <option value="Comportamental" ${U && U.approach === 'Comportamental' ? 'selected' : ''}>Comportamental</option>
+                    <option value="Sistemica" ${U && U.approach === 'Sistemica' ? 'selected' : ''}>Sistêmica</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="saveProfileData()">Salvar Alterações</button>
+        </div>
+    `;
+    $("content").innerHTML = content;
+}
+
+function saveProfileData() {
+    var name = $("prof_name") ? $("prof_name").value.trim() : "";
+    var crp = $("prof_crp") ? $("prof_crp").value.trim() : "";
+    var approach = $("prof_approach") ? $("prof_approach").value : "TCC";
+
+    if (!name || !crp) {
+        alert("Por favor, preencha o nome e o registro profissional.");
+        return;
+    }
+
+    if (!U) U = {};
+    U.name = name;
+    U.crp = crp;
+    U.approach = approach;
+
+    db.collection("users").doc(U.uid).set({
+        name: name,
+        crp: crp,
+        approach: approach
+    }, { merge: true }).then(function() {
+        alert("Dados profissionais atualizados com sucesso!");
+        home();
+    }).catch(function(error) {
+        alert("Erro ao salvar dados: " + error.message);
+    });
+}
 </script>
 </body>
 </html>
