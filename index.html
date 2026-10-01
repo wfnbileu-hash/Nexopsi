@@ -236,14 +236,23 @@ function handleLogin() {
   var errDiv = $("login-err");
   var btn = $("btn-login");
 
-  errDiv.innerText = "";
-  btn.innerText = "Entrando...";
-  btn.disabled = true;
+  if (!email || !senha) {
+    if (errDiv) errDiv.innerText = "Por favor, preencha o e-mail e a senha.";
+    return;
+  }
+
+  if (errDiv) errDiv.innerText = "";
+  if (btn) {
+    btn.innerText = "Entrando...";
+    btn.disabled = true;
+  }
 
   auth.signInWithEmailAndPassword(email, senha).catch(function(error) {
-    btn.innerText = "Entrar no NexoPsi";
-    btn.disabled = false;
-    errDiv.innerText = "Erro ao entrar: " + error.message;
+    if (btn) {
+      btn.innerText = "Entrar no NexoPsi";
+      btn.disabled = false;
+    }
+    if (errDiv) errDiv.innerText = "Erro ao entrar: " + error.message;
   });
 }
 
