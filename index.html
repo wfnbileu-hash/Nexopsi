@@ -654,22 +654,21 @@ async function analyze(){
     "4. Objetivo estratégico e Script de abertura exato para a próxima consulta.\n" +
     "5. 2 Ferramentas ou técnicas práticas perfeitamente adequadas a este perfil.";
 
-  var aiText = await callGeminiAPI(promptIA);
+    var aiText = await callGeminiAPI(promptIA);
 
   if(!aiText) {
-    aiText = "<h4>Atenção</h4><p>Não foi possível obter resposta automática da IA neste momento devido à instabilidade de rede. Verifique a conexão e tente novamente.</p>";
+    aiText = "<h4>Atenção</h4><p>Não foi possível obter resposta automática da IA neste momento. Tente novamente.</p>";
   }
 
   renderStructuredAnalysis(p, approach, ss, aiText);
 }
 
-}
 function renderStructuredAnalysis(p, approach, ss, aiText){
-  var textAll = ( (p.queixa || "") + " " + (p.historico || "") + " " + ss.map(function(x) { return x.event; }).join(" ") ).toLowerCase();
+  var textAll = (p.queixa || "") + " " + (p.historico || "");
   
   var activeAlerts = [];
   RISK_KEYWORDS.forEach(function(rk) {
-    var found = rk.words.some(function(w) { return textAll.indexOf(w) !== -1; });
+    var found = rk.words.some(function(w) { return textAll.toLowerCase().indexOf(w) !== -1; });
     if (found) activeAlerts.push(rk);
   });
 
@@ -677,19 +676,30 @@ function renderStructuredAnalysis(p, approach, ss, aiText){
     return '<div class="alert-box ' + al.level + '">' +
       '<h4>' + al.title + '</h4>' +
       '<p>' + al.desc + '</p>' +
-    '</div>';
+      '</div>';
   }).join("");
 
-  chatHistory = [
-    { sender: 'bot', text: 'Supervisão clínica gerada exclusivamente para ' + p.name + '! Como posso te ajudar a refinar o manejo ou preparar a próxima sessão?' }
-  ];
+  // Inicializa o chat inicial do paciente se estiver vazio
+  if (!chatHistory || chatHistory.length === 0) {
+    chatHistory = [
+      { sender: 'bot', text: 'Supervisão clínica gerada exclusivamente para ' + p.name + '! Como posso ajudar a refinar o manejo ou preparar a próxima sessão?' }
+    ];
+  }
 
   $("out").innerHTML = 
     '<div class="card" id="report-to-print">' +
-      '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">' +
+      '<div style="display:flex; justify-content:space-between; align-items:center;">' +
         '<h3>🧠 Parecer Clínico Personalizado — ' + esc(p.name) + '</h3>' +
         '<span class="status-pill">' + esc(approach) + '</span>' +
       '</div>' +
+      alertsHtml +
+      '<div class="result-box" style="border-left-color: #8b5cf6; margin-top: 15px;">' +
+        '<h4>📋 Análise Detalhada &amp; Raciocínio Clínico (Gemini IA)</h4>' +
+        '<div>' + aiText + '</div>' +
+      '</div>' +
+    '</div>';
+}
+
 
       alertsHtml +
 
