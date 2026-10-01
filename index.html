@@ -763,16 +763,23 @@ async function sendAIChatMessage(patientId, approach){
     return (m.sender === 'user' ? 'Terapeuta: ' : 'Supervisor IA: ') + m.text;
   }).join("\n");
 
-  // Prompt ajustado para focar em respostas curtas, diretas e pragmáticas
-    var chatPrompt = "Atue estritamente como um Supervisor Clínico sênior especialista na abordagem " + approach + ".\n" +
-    "Paciente: " + (p ? p.name : "Geral") + " | Queixa: " + (p ? p.queixa : "N/I") + ".\n" +
-    "Histórico:\n" + historicoRecente + "\n\n" +
-    "Responda à pergunta do terapeuta ('" + msg + "') em NO MÁXIMO 3 linhas ou tópicos curtíssimos. Seja direto como uma mensagem rápida de WhatsApp. Sem introduções longas, sem saudações e sem tom de laudo, apenas a orientação prática imediata:";
+  var chatPrompt = "Atue estritamente como um Supervisor Clínico sênior especialista na abordagem " + approach + ".\n" +
+    "Paciente em foco: " + (p ? p.name : "Geral") + " | Queixa: " + (p ? p.queixa : "N/I") + ".\n" +
+    "Histórico recente da conversa:\n" + historicoRecente + "\n\n" +
+    "Responda à pergunta direta do terapeuta ('" + msg + "') com precisão cirúrgica e foco clínico absoluto. " +
+    "Se a pergunta envolver risco iminente ou ideação suicida, oriente imediatamente o protocolo de segurança (avaliação de plano, rede de apoio, CVV 188). " +
+    "Se for sobre conduta na sessão, dê o direcionamento exato em no máximo 3 frases curtas, sem enrolação:";
 
   var reply = await callGeminiAPI(chatPrompt);
   
+  // Fallback inteligente caso a rede falhe, baseado na pergunta do usuário
   if (!reply) {
-    reply = "Foque em validar o afeto principal e abrir o espaço terapêutico com uma pergunta aberta sobre o último evento significativo.";
+    var lowerMsg = msg.toLowerCase();
+    if (lowerMsg.indexOf("suicid") !== -1 || lowerMsg.indexOf("morrer") !== -1 || lowerMsg.indexOf("vida") !== -1) {
+      reply = "🚨 Acolha o sofrimento sem julgamentos, avalie imediatamente a presença de plano ativo ou intenção letal, acione a rede de apoio familiar e oriente sobre o CVV (188).";
+    } else {
+      reply = "Direcione o foco para o evento gatilho mais recente relatado na última sessão e questione o paciente sobre o pensamento automático associado.";
+    }
   }
 
   chatHistory.push({ sender: 'bot', text: reply });
