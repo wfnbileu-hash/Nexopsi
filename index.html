@@ -1001,17 +1001,15 @@ function saveProfileData() {
 </div>
 
 <script>
-  // TESTE DIRETO: Força o modal a abrir assim que a página carregar
-  window.addEventListener('DOMContentLoaded', (event) => {
-    console.log("A forçar abertura do modal para teste...");
-    const modal = document.getElementById('termsModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.style.zIndex = '999999'; // Garante que fica por cima de tudo
-    } else {
-      console.error("ERRO: O elemento 'termsModal' não foi encontrado no HTML!");
-    }
-  });
+  // Executa de forma direta, pois o script está no fim do body
+  console.log("A forçar abertura do modal...");
+  const modal = document.getElementById('termsModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.style.zIndex = '999999';
+  } else {
+    console.error("ERRO: O elemento 'termsModal' não foi encontrado!");
+  }
 
   const checkbox = document.getElementById('acceptTermsCheck');
   const btnContinuar = document.getElementById('acceptTermsBtn');
