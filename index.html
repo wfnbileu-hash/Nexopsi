@@ -1001,14 +1001,21 @@ function saveProfileData() {
 </div>
 
 <script>
-  // Verifica o estado de autenticação e os termos
+  // Monitoriza o estado de autenticação do Firebase
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       const db = firebase.firestore();
       db.collection("users").doc(user.uid).get().then((doc) => {
-        if (!doc.exists || !doc.data().termsAccepted) {
+        // Se o documento não existe OU se os termos não foram aceitos
+        if (!doc.exists || doc.data().termsAccepted !== true) {
           document.getElementById('termsModal').style.display = 'flex';
+        } else {
+          document.getElementById('termsModal').style.display = 'none';
         }
+      }).catch((error) => {
+        console.error("Erro ao verificar termos no Firestore:", error);
+        // Em caso de erro na leitura, por segurança mostramos o modal para evitar bypass
+        document.getElementById('termsModal').style.display = 'flex';
       });
     }
   });
@@ -1016,10 +1023,12 @@ function saveProfileData() {
   const checkbox = document.getElementById('acceptTermsCheck');
   const btnContinuar = document.getElementById('acceptTermsBtn');
 
+  // Habilita ou desabilita o botão conforme a caixinha estiver marcada
   checkbox.addEventListener('change', function() {
     btnContinuar.disabled = !this.checked;
   });
 
+  // Ação ao clicar em continuar
   btnContinuar.addEventListener('click', function() {
     const user = firebase.auth().currentUser;
     if (user) {
@@ -1028,7 +1037,11 @@ function saveProfileData() {
         termsAccepted: true,
         termsAcceptedAt: new Date().toISOString()
       }, { merge: true }).then(() => {
+        // Oculta o modal com sucesso
         document.getElementById('termsModal').style.display = 'none';
+      }).catch((error) => {
+        alert("Erro ao gravar aceite. Tente novamente.");
+        console.error(error);
       });
     }
   });
