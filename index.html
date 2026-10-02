@@ -967,31 +967,17 @@ function saveProfileData() {
         alert("Erro ao salvar dados: " + error.message);
     });
 }
-</script>
-  <!-- Modal de Aceitação de Termos -->
-<div id="termsModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <h2>Termos de Uso e Privacidade</h2>
-    <div class="terms-text-box">
-      <p><strong>1. Aceitação:</strong> Ao utilizar o Nexopsi, concorda com os termos de infraestrutura e o uso ético dos dados.</p>
-      <p><strong>2. Sigilo Profissional:</strong> É de sua inteira responsabilidade zelar pelo sigilo clínico e anonimização dos dados.</p>
-      <p><strong>3. Inteligência Artificial:</strong> Os pareceres gerados via Gemini API são auxiliares; a validação clínica final é do profissional.</p>
-    </div>
-    <label class="checkbox-label">
-      <input type="checkbox" id="acceptTermsCheck"> Li e concordo com os Termos de Uso e Política de Privacidade.
-    </label>
-    <button id="acceptTermsBtn" class="btn-primary" disabled>Continuar</button>
-  </div>
-</div>
 <script>
-  // Executa de forma direta, pois o script está no fim do body
-  console.log("A forçar abertura do modal...");
+  // Alerta de teste para confirmar se o script está mesmo a executar
+  alert("O script do modal foi lido!");
+
   const modal = document.getElementById('termsModal');
   if (modal) {
     modal.style.display = 'flex';
     modal.style.zIndex = '999999';
+    console.log("Modal aberto com sucesso!");
   } else {
-    console.error("ERRO: O elemento 'termsModal' não foi encontrado!");
+    alert("ERRO: Elemento 'termsModal' não encontrado no HTML!");
   }
 
   const checkbox = document.getElementById('acceptTermsCheck');
