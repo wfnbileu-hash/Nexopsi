@@ -781,7 +781,7 @@ async function sendAIChatMessage(patientId, approach){
     "- Histórico de Sessões: " + (sessoesResumo || "Nenhuma registrada") + "\n\n" +
     "Histórico do chat:\n" + historicoRecente + "\n\n" +
     "Instrução obrigatória:\n" +
-    "Responda à última mensagem do terapeuta ('" + msg + "') de forma extremamente objetiva, prática e direta ao ponto (máximo de 2 a 3 frases). " +
+    "Responda à última mensagem do terapeuta ('" + msg + "') de forma natural, prática e direta, mas desenvolva o raciocínio quando isso for necessário para responder adequadamente. " +
     "Não invente dados que não constam no histórico do paciente e não dê respostas genéricas. Diga exatamente o que o terapeuta deve fazer ou perguntar na sessão:";
 
   var reply = await callGeminiAPI(chatPrompt);
