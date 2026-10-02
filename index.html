@@ -971,38 +971,7 @@ function saveProfileData() {
   // Executa de forma direta, pois o script está no fim do body
   console.log("A forçar abertura do modal...");
   const modal = document.getElementById('termsModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    modal.style.zIndex = '999999';
-  } else {
-    console.error("ERRO: O elemento 'termsModal' não foi encontrado!");
-  }
-
-  const checkbox = document.getElementById('acceptTermsCheck');
-  const btnContinuar = document.getElementById('acceptTermsBtn');
-
-  if (checkbox && btnContinuar) {
-    checkbox.addEventListener('change', function() {
-      btnContinuar.disabled = !this.checked;
-    });
-
-    btnContinuar.addEventListener('click', function() {
-      const user = firebase.auth().currentUser;
-      if (user) {
-        const db = firebase.firestore();
-        db.collection("users").doc(user.uid).set({
-          termsAccepted: true,
-          termsAcceptedAt: new Date().toISOString()
-        }, { merge: true }).then(() => {
-          document.getElementById('termsModal').style.display = 'none';
-        }).catch((error) => {
-          alert("Erro ao gravar aceite: " + error.message);
-        });
-      } else {
-        alert("Nenhum usuário autenticado no momento do clique.");
-      }
-    });
-  }
+  ...
 </script>
 </body>
 </html>
