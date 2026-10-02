@@ -968,16 +968,14 @@ function saveProfileData() {
     });
 }
 <script>
-  // Alerta de teste para confirmar se o script está mesmo a executar
-  alert("O script do modal foi lido!");
-
+  // Executa de forma direta, pois o script está no fim do body
+  console.log("A forçar abertura do modal...");
   const modal = document.getElementById('termsModal');
   if (modal) {
     modal.style.display = 'flex';
     modal.style.zIndex = '999999';
-    console.log("Modal aberto com sucesso!");
   } else {
-    alert("ERRO: Elemento 'termsModal' não encontrado no HTML!");
+    console.error("ERRO: O elemento 'termsModal' não foi encontrado!");
   }
 
   const checkbox = document.getElementById('acceptTermsCheck');
