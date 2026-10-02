@@ -967,11 +967,164 @@ function saveProfileData() {
         alert("Erro ao salvar dados: " + error.message);
     });
 }
-<script>
-  // Executa de forma direta, pois o script está no fim do body
-  console.log("A forçar abertura do modal...");
-  const modal = document.getElementById('termsModal');
-  ...
 </script>
+
+<!-- TERMO DE USO E RESPONSABILIDADE -->
+<div id="termsModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:rgba(15,23,42,.78);
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+">
+  <div style="
+    background:#fff;
+    width:100%;
+    max-width:620px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+    color:#27324a;
+  ">
+
+    <h2 style="margin-top:0;color:#312e81;">
+      📋 Termo de Uso e Responsabilidade
+    </h2>
+
+    <p style="font-size:14px;line-height:1.6;">
+      O NexoPsi é uma ferramenta de apoio ao raciocínio clínico e à organização
+      de informações profissionais. Ele não substitui a formação, o julgamento
+      clínico, a responsabilidade técnica ou as decisões do profissional.
+    </p>
+
+    <p style="font-size:14px;line-height:1.6;">
+      As informações e sugestões apresentadas pela inteligência artificial
+      devem ser analisadas criticamente pelo profissional antes de qualquer
+      utilização no atendimento.
+    </p>
+
+    <p style="font-size:14px;line-height:1.6;">
+      O profissional permanece responsável pela avaliação do caso, pelas
+      decisões tomadas, pelos registros realizados e pela utilização das
+      informações fornecidas pela plataforma.
+    </p>
+
+    <p style="font-size:14px;line-height:1.6;">
+      Não devem ser inseridas informações desnecessárias que permitam a
+      identificação direta do paciente. Sempre que possível, utilize
+      iniciais, códigos ou identificadores fictícios.
+    </p>
+
+    <div style="
+      background:#f8f7ff;
+      border:1px solid #e0e3ee;
+      border-radius:14px;
+      padding:14px;
+      margin:18px 0;
+    ">
+      <label style="
+        display:flex;
+        align-items:flex-start;
+        gap:10px;
+        color:#27324a;
+        font-weight:normal;
+        font-size:14px;
+        line-height:1.5;
+      ">
+        <input
+          type="checkbox"
+          id="acceptTermsCheck"
+          style="width:20px;height:20px;margin:2px 0 0 0;flex-shrink:0;"
+        >
+        <span>
+          Li e compreendi o Termo de Uso e Responsabilidade e concordo com
+          suas condições.
+        </span>
+      </label>
+    </div>
+
+    <button
+      class="btn"
+      id="acceptTermsBtn"
+      type="button"
+      disabled
+    >
+      Continuar para o NexoPsi
+    </button>
+
+  </div>
+</div>
+
+<script>
+(function(){
+
+  function openTermsIfNeeded(user) {
+    if (!user) return;
+
+    db.collection("users").doc(user.uid).get().then(function(doc) {
+
+      var data = doc.exists ? doc.data() : {};
+
+      if (!data.termsAccepted) {
+        var modal = document.getElementById("termsModal");
+        var checkbox = document.getElementById("acceptTermsCheck");
+        var btn = document.getElementById("acceptTermsBtn");
+
+        if (modal) modal.style.display = "flex";
+
+        if (checkbox && btn) {
+
+          btn.disabled = !checkbox.checked;
+
+          checkbox.onchange = function(){
+            btn.disabled = !this.checked;
+          };
+
+          btn.onclick = function(){
+
+            if (!checkbox.checked) return;
+
+            btn.disabled = true;
+            btn.innerText = "Registrando aceite...";
+
+            db.collection("users").doc(user.uid).set({
+              termsAccepted: true,
+              termsAcceptedAt: new Date().toISOString()
+            }, { merge:true }).then(function(){
+
+              if (modal) modal.style.display = "none";
+
+            }).catch(function(error){
+
+              btn.disabled = false;
+              btn.innerText = "Continuar para o NexoPsi";
+
+              alert("Erro ao registrar o aceite: " + error.message);
+            });
+          };
+        }
+      }
+
+    }).catch(function(error){
+      console.error("Erro ao verificar Termo de Uso:", error);
+    });
+  }
+
+  auth.onAuthStateChanged(function(user){
+    if(user){
+      setTimeout(function(){
+        openTermsIfNeeded(user);
+      }, 300);
+    }
+  });
+
+})();
+</script>
+
 </body>
 </html>
