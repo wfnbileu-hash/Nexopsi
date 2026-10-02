@@ -257,30 +257,64 @@ function handleLogin() {
 }
 
 function handleRegister() {
-  var nome = $("rn").value.trim();
-  var email = $("re").value.trim();
-  var senha = $("rp").value.trim();
-  var abordagem = $("ra").value;
-  var errDiv = $("reg-err");
-  var btn = $("btn-reg");
+    var nome = $("rn").value.trim();
+    var email = $("re").value.trim();
+    var senha = $("rp").value.trim();
+    var abordagem = $("ra").value;
+    var errDiv = $("reg-err");
+    var btn = $("btn-reg");
 
-  errDiv.innerText = "";
-  btn.innerText = "Criando conta...";
-  btn.disabled = true;
+    if (!nome || !email || !senha) {
+        if (errDiv) errDiv.innerText = "Por favor, preencha todos os campos.";
+        return;
+    }
 
-  auth.createUserWithEmailAndPassword(email, senha).then(function(userCredential) {
-    var user = userCredential.user;
-    if (user.updateProfile) user.updateProfile({ displayName: nome });
+    if (errDiv) errDiv.innerText = "";
+    if (btn) {
+        btn.innerText = "Criando conta...";
+        btn.disabled = true;
+    }
 
-    return db.collection("users").doc(user.uid).set({
-      name: nome, email: email, approach: abordagem, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  }).catch(function(error) {
-    btn.innerText = "Finalizar Cadastro";
-    btn.disabled = false;
-    errDiv.innerText = "Erro no cadastro: " + error.message;
-  });
+    // 1. Cria o utilizador no Firebase Auth
+    auth.createUserWithEmailAndPassword(email, senha)
+        .then((userCredential) => {
+            var user = userCredential.user;
+            
+            // 2. Calcula a data de expiração do teste (7 dias à frente)
+            var trialEnd = new Date();
+            trialEnd.setDate(trialEnd.getDate() + 7);
+
+            // 3. Guarda os dados de controlo anti-fraude no Firestore
+            return db.collection("users").doc(user.uid).set({
+                name: nome,
+                email: email,
+                approach: abordagem,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                trialExpiresAt: trialEnd.toISOString(),
+                lifetimeAccess: false, // O teu controlo manual para acesso vitalício
+                role: "user"
+            }).then(() => {
+                // 4. Envia o e-mail de verificação oficial do Firebase
+                return user.sendEmailVerification();
+            });
+        })
+        .then(() => {
+            alert("Conta criada com sucesso! Enviámos um link de confirmação para o teu e-mail. Por favor, verifica a caixa de entrada para ativar a conta.");
+            if (btn) {
+                btn.innerText = "Criar nova conta de acesso";
+                btn.disabled = false;
+            }
+            showScreen("login");
+        })
+        .catch((err) => {
+            if (btn) {
+                btn.innerText = "Criar nova conta de acesso";
+                btn.disabled = false;
+            }
+            if (errDiv) errDiv.innerText = "Erro ao criar conta: " + err.message;
+        });
 }
+
 
 function logout() { auth.signOut().then(function() { location.reload(); }); }
 
